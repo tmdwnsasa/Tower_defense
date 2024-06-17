@@ -15,3 +15,12 @@ initSocket(server);
 app.get('/', (req, res) => {
   return res.status(200).json({ message: 'Hello World!' });
 });
+
+server.listen(PORT, async () => {
+  try {
+    //리소스 로딩 하는 곳
+    console.log('Success');
+  } catch (err) {
+    console.log('Failed to load game assets');
+  }
+});
