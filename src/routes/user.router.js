@@ -39,7 +39,7 @@ router.post('/signUp', async (req, res, next) => {
 });
 
 // 로그인 API
-router.get('/signIn', async (req, res, next) => {
+router.post('/signIn', async (req, res, next) => {
   try {
     const { id: userId, password } = req.body;
 
