@@ -43,6 +43,10 @@ router.get('/signIn', async (req, res, next) => {
   try {
     const { id: userId, password } = req.body;
 
+    if (!userId || !password) {
+      return res.status(401).json({ errorMessage: '입력 값이 잘못되었습니다.' });
+    }
+
     // 유저 존재 유무 확인
     const user = await prisma.user.findUnique({
       where: { userId },
