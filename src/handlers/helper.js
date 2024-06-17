@@ -6,7 +6,7 @@ export const handleDiscnnect = (socket, uuid) => {
 };
 
 export const handleConnection = (socket, uuid) => {
-  socket.emit('connection', { uuid, highScore });
+  socket.emit('connection', { uuid });
 };
 
 export const handlerEvent = (io, socket, data) => {

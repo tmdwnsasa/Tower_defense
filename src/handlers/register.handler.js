@@ -5,7 +5,6 @@ const registerHandler = (io) => {
   io.on('connection', (socket) => {
     const userUUID = '';
     addUser({ uuid: userUUID, socketId: socket.id });
-    console.log('111');
     handleConnection(socket, userUUID);
 
     socket.on('event', (data) => handlerEvent(io, socket, data));
