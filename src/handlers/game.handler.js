@@ -1,8 +1,13 @@
-export const gameStart = (uuid, payload) => {
+import { initializeMonsters } from '../models/monster.model.js';
+import { initializeBase } from '../models/base.model.js';
+
+export const gameStart = (userId, payload) => {
+  initializeMonsters(userId);
+  initializeBase(userId);
   return { status: 'success' };
 };
 
-export const gameEnd = (uuid, payload) => {
+export const gameEnd = (userId, payload) => {
   const { timestamp: gameEndTime, score } = payload;
 
   // 점수 검증

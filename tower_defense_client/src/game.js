@@ -2,7 +2,8 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import './Socket.js';
-import { connectServer } from './Socket.js';
+import { connectServer, sendEvent } from './Socket.js';
+import { id } from './user.js';
 
 import stageData from '../assets/stage.json' with { type: 'json' };
 import monsterData from '../assets/monster.json' with { type: 'json' };
@@ -12,34 +13,6 @@ import initData from '../assets/init.json' with { type: 'json' };
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
-function getCookie(cName) {
-  cName = cName + '=';
-  const cookieData = document.cookie;
-  let start = cookieData.indexOf(cName);
-  let cValue = null;
-  if (start != -1) {
-    start += cName.length;
-    var end = cookieData.indexOf(';', start);
-    if (end == -1) end = cookieData.length;
-    cValue = cookieData.substring(start, end);
-  }
-  return cValue;
-}
-try {
-  const authorization = getCookie('authorization');
-
-  if (!authorization) {
-    alert('로그인 필요');
-    window.location.href = 'login.html';
-  }
-} catch (err) {
-  switch (err.name) {
-    case 'JsonWebTokenError':
-      alert('토큰이 잘못되었습니다.');
-    default:
-      alert(err.message ?? '비정상적인 요청입니다.');
-  }
-}
 
 let serverSocket; // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
@@ -208,13 +181,12 @@ function placeNewTower() {
     타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치하면 됩니다.
     빠진 코드들을 채워넣어주세요! 
   */
-  if(userGold < towerCost){
+  if (userGold < towerCost) {
     return;
   }
 
   userGold -= towerCost;
-  console.log(userGold);
-    
+
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y);
   towers.push(tower);
@@ -263,7 +235,7 @@ function gameLoop() {
   });
 
   // 몬스터 레벨 업 및 1000골드 지급
-  if(score >= 2000 * monsterLevel){
+  if (score >= 2000 * monsterLevel) {
     monsterLevel++;
     userGold+= 1000;
 
@@ -285,6 +257,7 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       /* 몬스터가 죽었을 때 */
+      sendEvent(41, { monsterLevel: monster.level });
       monsters.splice(i, 1);
       score += 100;
     }
@@ -302,6 +275,8 @@ function initGame() {
   userGold = +INIT_DATA.userGold;
   baseHp = +INIT_DATA.baseHp;
   towerCost = +INIT_DATA.towerCost;
+
+  sendEvent(2, {});
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
@@ -322,7 +297,7 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
-  connectServer();
+  connectServer(id);
   let somewhere;
   serverSocket = io('서버주소', {
     auth: {

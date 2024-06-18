@@ -3,13 +3,13 @@ import { handleConnection, handleDisconnect, handlerEvent } from './helper.js';
 
 const registerHandler = (io) => {
   io.on('connection', (socket) => {
-    const userId = '';
-    addUser({ uuid: userUUID, socketId: socket.id });
-    handleConnection(socket, userUUID);
+    const id = socket.handshake.query.id;
+    addUser({ id: id, socketId: socket.id });
+    handleConnection(socket, id);
 
     socket.on('event', (data) => handlerEvent(io, socket, data));
     socket.on('disconnect', (socket) => {
-      handleDisconnect(socket, userUUID);
+      handleDisconnect(socket, id);
     });
   });
 };
