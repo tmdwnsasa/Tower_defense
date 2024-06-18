@@ -20,7 +20,7 @@ const authorizeUser = async () => {
   const result = await res.json();
   console.log(result.message);
 
-  return result.data.userId;
+  return result.data.id;
 };
 
 export const id = await authorizeUser();

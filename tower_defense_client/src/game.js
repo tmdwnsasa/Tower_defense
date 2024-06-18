@@ -2,7 +2,7 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import './Socket.js';
-import { connectServer } from './Socket.js';
+import { connectServer, sendEvent } from './Socket.js';
 import { id } from './user.js';
 
 /* 
@@ -168,7 +168,6 @@ function placeNewTower() {
   }
 
   userGold -= towerCost;
-  console.log(userGold);
 
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y);
@@ -234,6 +233,7 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       /* 몬스터가 죽었을 때 */
+      sendEvent(41, { monsterLevel: monster.level });
       monsters.splice(i, 1);
       score += 100;
     }
@@ -246,6 +246,8 @@ function initGame() {
   if (isInitGame) {
     return;
   }
+
+  sendEvent(2, {});
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
@@ -266,7 +268,7 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
-  connectServer();
+  connectServer(id);
   let somewhere;
   serverSocket = io('서버주소', {
     auth: {

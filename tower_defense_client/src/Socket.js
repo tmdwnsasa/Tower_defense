@@ -1,24 +1,29 @@
 import { CLIENT_VERSION } from './Constants.js';
 
-let userId = null;
-
-const connectServer = () => {
-  const socket = io('http://localhost:3000', {
+let id = null;
+let socket;
+const connectServer = (id) => {
+  socket = io('http://localhost:3000', {
     query: {
       clientVersion: CLIENT_VERSION,
+      id: id,
     },
   });
 
-  socket.on('response', (data) => {});
+  socket.on('response', (data) => {
+    console.log(data);
+  });
 
   socket.on('connection', (data) => {
-    userId = data.uuid;
+    console.log('connection: ', data);
+    id = data.id;
   });
 };
 
 const sendEvent = (handlerId, payload) => {
+  console.log('event');
   socket.emit('event', {
-    userId,
+    id,
     clientVersion: CLIENT_VERSION,
     handlerId,
     payload,
