@@ -8,9 +8,21 @@ datasource db {
 }
 
 model User {
-  userId   String @id @map("user_id")
-  password String @map("password")
-  score    Int    @default(0) @map("score")
+  id        String @id @map("id")
+  password  String @map("password")
+
+  GameResultLog GameResultLog[]
 
   @@map("user")
+}
+
+model GameResultLog {
+  gameId        Int       @id @default(autoincrement()) @map("game_id")
+  id            String    @map("id")
+  score         Int       @default(0) @map("score")
+  timestamp     DateTime  @default(now()) @map("timestamp")
+  
+  User User @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@map("game_result_log")
 }
