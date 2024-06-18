@@ -61,10 +61,10 @@ let stage = 0;
 // ----- 서버 데이터 -----
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
-let baseHp = 100; // 기지 체력
+let baseHp = 0; // 기지 체력
 
-let towerCost = 100; // 타워 구입 비용
-let numOfInitialTowers = 3; // 초기 타워 개수
+let towerCost = 0; // 타워 구입 비용
+let numOfInitialTowers = 0; // 초기 타워 개수
 
 // ---- 유저 데이터 -----
 let monsterLevel = 1; // 몬스터 레벨
@@ -194,6 +194,7 @@ function placeInitialTowers() {
     타워를 초기에 배치하는 함수입니다.
     무언가 빠진 코드가 있는 것 같지 않나요? 
   */
+  numOfInitialTowers = +INIT_DATA.numOfInitialTowers;
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(x, y, towerCost);
@@ -296,6 +297,11 @@ function initGame() {
   if (isInitGame) {
     return;
   }
+  
+  // 시작 데이터 적용
+  userGold = +INIT_DATA.userGold;
+  baseHp = +INIT_DATA.baseHp;
+  towerCost = +INIT_DATA.towerCost;
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)

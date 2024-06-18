@@ -1,7 +1,5 @@
 {
     "name": "init",
     "version": "1.0.0",
-    "data": [
-      { "baseHp":  100, "userGold": 1000, "towerCost": 100, "numOfInitialTowers": 3 }
-    ]
+    "data": { "baseHp": 100, "userGold": 1000, "towerCost": 100, "numOfInitialTowers": 3 }
   }
