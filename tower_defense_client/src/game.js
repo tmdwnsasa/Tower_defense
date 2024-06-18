@@ -42,14 +42,17 @@ const ctx = canvas.getContext('2d');
 
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 
+// ----- 서버 데이터 -----
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
-let baseHp = 0; // 기지 체력
+let baseHp = 100; // 기지 체력
 
-let towerCost = 0; // 타워 구입 비용
-let numOfInitialTowers = 0; // 초기 타워 개수
-let monsterLevel = 0; // 몬스터 레벨
-let monsterSpawnInterval = 0; // 몬스터 생성 주기
+let towerCost = 100; // 타워 구입 비용
+let numOfInitialTowers = 3; // 초기 타워 개수
+
+// ---- 유저 데이터 -----
+let monsterLevel = 1; // 몬스터 레벨
+let monsterSpawnInterval = 1000; // 몬스터 생성 주기
 const monsters = [];
 const towers = [];
 
@@ -187,6 +190,13 @@ function placeNewTower() {
     타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치하면 됩니다.
     빠진 코드들을 채워넣어주세요! 
   */
+  if(userGold < towerCost){
+    return;
+  }
+
+  userGold -= towerCost;
+  console.log(userGold);
+    
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y);
   towers.push(tower);
@@ -230,6 +240,12 @@ function gameLoop() {
     });
   });
 
+  // 몬스터 레벨 업 및 1000골드 지급
+  if(score >= 2000 * monsterLevel){
+    monsterLevel++;
+    userGold+= 1000;
+  }
+
   // 몬스터가 공격을 했을 수 있으므로 기지 다시 그리기
   base.draw(ctx, baseImage);
 
@@ -246,6 +262,7 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
+      score += 100;
     }
   }
 

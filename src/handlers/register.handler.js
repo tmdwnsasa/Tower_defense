@@ -3,7 +3,7 @@ import { handleConnection, handleDiscnnect, handlerEvent } from './helper.js';
 
 const registerHandler = (io) => {
   io.on('connection', (socket) => {
-    const userUUID = '';
+    const userId = '';
     addUser({ uuid: userUUID, socketId: socket.id });
     handleConnection(socket, userUUID);
 
