@@ -8,15 +8,17 @@ export const initializeMonsters = (userId) => {
 // 몬스터가 죽었을 때 횟수 증가
 export const increaseMonsterKillCount = (userId, monsterLevel, cnt = 1) => {
   if (!userMonstersInfo[userId][data][monsterLevel]) {
-    userMonstersInfo[userId][data].push(cnt);
+    userMonstersInfo[userId].data.push(cnt);
   } else {
-    userMonstersInfo[userId][data][monsterLevel] += cnt;
+    userMonstersInfo[userId].data[monsterLevel] += cnt;
+    if (userMonstersInfo[userId].data[monsterLevel] >= 20) increaseMonsterLevel(userId);
   }
 };
 
 // 몬스터 레벨 증가
 export const increaseMonsterLevel = (userId) => {
   userMonstersInfo[userId].currentLevel++;
+  console.log(userMonstersInfo[userId].currentLevel);
 };
 
 // 현재 몬스터 레벨 조회

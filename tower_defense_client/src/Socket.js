@@ -21,7 +21,7 @@ const connectServer = (id) => {
 };
 
 const sendEvent = (handlerId, payload) => {
-  console.log('event');
+  console.log(payload);
   socket.emit('event', {
     id,
     clientVersion: CLIENT_VERSION,
