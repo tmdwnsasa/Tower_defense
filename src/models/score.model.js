@@ -1,23 +1,26 @@
-import { prisma } from '';
+import { prisma } from '../utils/prisma/index.js';
 
-// 최고 점수 갱신
-export const updateHighScore = async (userId, score) => {
-  const updatedHighScore = await prisma.User.update({
-    data: {
-      score,
-    },
-    where: {
-      userId,
-    },
-  });
-};
+// // 최고 점수 갱신
+// export const updateHighScore = async (userId, score) => {
+//   const updatedHighScore = await prisma.User.update({
+//     data: {
+//       score,
+//     },
+//     where: {
+//       userId,
+//     },
+//   });
+// };
 
 // 최고 점수 조회
-export const getHighScore = async userId => {
-  const user = await prisma.User.findFirst({
+export const getHighScore = async (userId) => {
+  const user = await prisma.GameResultLog.findFirst({
     where: {
       userId,
     },
+    orderBy: {
+      score: 'desc',
+    }
   });
 
   if (!user) {
@@ -60,7 +63,7 @@ export const getGameResults = async (userId, take = 10) => {
 
 // 랭킹 조회
 export const getranking = async (take = 10) => {
-  const ranking = await prisma.User.findMany({
+  const ranking = await prisma.GameResultLog.findMany({
     data: {
       userId: true,
       score: true,
