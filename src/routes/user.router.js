@@ -93,17 +93,17 @@ router.get('/auth', async (req, res, next) => {
     }
 
     const decodedToken = jwt.verify(token, configs.tokenSecretKey);
-    const userId = decodedToken.userId;
+    const id = decodedToken.id;
 
     const user = await prisma.user.findUnique({
-      where: { userId },
+      where: { id },
     });
     if (!user) {
       res.clearCookie('authorization');
       throw new Error('토큰 사용자가 존재하지 않습니다.');
     }
 
-    return res.status(200).json({ message: '토큰 사용자 인증이 완료되었습니다.', data: { userId } });
+    return res.status(200).json({ message: '토큰 사용자 인증이 완료되었습니다.', data: { id } });
   } catch (err) {
     res.clearCookie('authorization');
 

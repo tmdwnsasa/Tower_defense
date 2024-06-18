@@ -168,7 +168,6 @@ function placeNewTower() {
   }
 
   userGold -= towerCost;
-  console.log(userGold);
 
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y);
@@ -248,6 +247,8 @@ function initGame() {
     return;
   }
 
+  sendEvent(2, {});
+
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
@@ -267,7 +268,7 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
-  connectServer();
+  connectServer(id);
   let somewhere;
   serverSocket = io('서버주소', {
     auth: {

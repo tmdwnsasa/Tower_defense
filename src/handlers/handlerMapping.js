@@ -1,5 +1,5 @@
 import { gameStart, gameEnd } from './game.handler.js';
-import { addMonsterKillCount } from './monster.model.js';
+import { addMonsterKillCount } from './monster.handler.js';
 
 const handlerMapping = {
   2: gameStart,

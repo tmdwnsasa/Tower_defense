@@ -16,12 +16,12 @@ export const increaseMonsterKillCount = (userId, monsterLevel, cnt = 1) => {
 
 // 몬스터 레벨 증가
 export const increaseMonsterLevel = (userId) => {
-  userMonstersInfo[userId][currentLevel]++;
+  userMonstersInfo[userId].currentLevel++;
 };
 
 // 현재 몬스터 레벨 조회
 export const getMonsterLevel = (userId) => {
-  return userMonstersInfo[userId][currentLevel];
+  return userMonstersInfo[userId].currentLevel;
 };
 
 // 유저의 몬스터 기록 삭제

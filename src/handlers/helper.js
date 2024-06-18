@@ -7,7 +7,6 @@ export const handleDisconnect = (socket, id) => {
 };
 
 export const handleConnection = (socket, id) => {
-  console.log('1');
   socket.emit('connection', { id });
 };
 
@@ -25,7 +24,6 @@ export const handlerEvent = (io, socket, data) => {
 
   const response = handler(data.userId, data.payload);
 
-  console.log(1);
   if (response.broadcast) {
     io.emit('response', 'response');
     return;

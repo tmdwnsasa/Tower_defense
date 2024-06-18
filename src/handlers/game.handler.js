@@ -1,4 +1,5 @@
 import { initializeMonsters } from '../models/monster.model.js';
+import { initializeBase } from '../models/base.model.js';
 
 export const gameStart = (userId, payload) => {
   initializeMonsters(userId);
