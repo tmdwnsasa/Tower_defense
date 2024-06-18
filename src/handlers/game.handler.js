@@ -1,13 +1,13 @@
 import { initializeMonsters } from '../models/monster.model.js';
 import { initializeBase } from '../models/base.model.js';
 
-export const gameStart = (userId, payload) => {
-  initializeMonsters(userId);
-  initializeBase(userId);
+export const gameStart = (id, payload) => {
+  initializeMonsters(idd);
+  initializeBase(id);
   return { status: 'success' };
 };
 
-export const gameEnd = (userId, payload) => {
+export const gameEnd = (id, payload) => {
   const { timestamp: gameEndTime, score } = payload;
 
   // 점수 검증
