@@ -76,4 +76,44 @@ router.post('/signIn', async (req, res, next) => {
   }
 });
 
+// 유저 검증 API
+router.get('/auth', async (req, res, next) => {
+  try {
+    const { authorization } = req.cookies;
+
+    if (!authorization) {
+      throw new Error('유효하지 않은 인증입니다.');
+    }
+
+    const [tokenType, token] = authorization.split(' ');
+
+    // 토큰 타입 확인
+    if (tokenType !== 'Bearer') {
+      throw new Error('토큰 타입이 일치하지 않습니다.');
+    }
+
+    const decodedToken = jwt.verify(token, configs.tokenSecretKey);
+    const userId = decodedToken.userId;
+
+    const user = await prisma.user.findUnique({
+      where: { userId },
+    });
+    if (!user) {
+      res.clearCookie('authorization');
+      throw new Error('토큰 사용자가 존재하지 않습니다.');
+    }
+
+    return res.status(200).json({ message: '토큰 사용자 인증이 완료되었습니다.', data: { userId } });
+  } catch (err) {
+    res.clearCookie('authorization');
+
+    switch (err.name) {
+      case 'JsonWebTokenError':
+        return res.status(400).json({ errorMessage: '토큰이 잘못되었습니다.' });
+      default:
+        return res.status(400).json({ errorMessage: err.message ?? '비정상적인 요청입니다.' });
+    }
+  }
+});
+
 export default router;
