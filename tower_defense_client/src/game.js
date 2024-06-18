@@ -4,6 +4,11 @@ import { Tower } from './tower.js';
 import './Socket.js';
 import { connectServer } from './Socket.js';
 
+import stageData from '../assets/stage.json' with { type: 'json' };
+import monsterData from '../assets/monster.json' with { type: 'json' };
+import monsterUnlockData from '../assets/monster_unlock.json' with { type: 'json' };
+import initData from '../assets/init.json' with { type: 'json' };
+
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
@@ -42,6 +47,17 @@ const ctx = canvas.getContext('2d');
 
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 
+// 시작 데이터 정보
+const INIT_DATA = initData.data;
+
+// 몬스터
+const MONSTER_CONFIG = monsterData.data;
+const MONSTER_UNLOCK_CONFIG = monsterUnlockData.data;
+
+// 스테이지 정보
+const STAGE_DATA = stageData.data;
+
+let stage = 0;
 // ----- 서버 데이터 -----
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
@@ -74,9 +90,10 @@ const pathImage = new Image();
 pathImage.src = 'images/path.png';
 
 const monsterImages = [];
-for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
+for (let i = 0; i < NUM_OF_MONSTERS; i++) {
   const img = new Image();
-  img.src = `images/monster${i}.png`;
+  console.log(MONSTER_CONFIG[i].image);
+  img.src = MONSTER_CONFIG[i].image;
   monsterImages.push(img);
 }
 
@@ -210,7 +227,11 @@ function placeBase() {
 }
 
 function spawnMonster() {
-  monsters.push(new Monster(monsterPath, monsterImages, monsterLevel));
+  const monster_unlock = MONSTER_UNLOCK_CONFIG[stage].monster_ids;
+  const monsterId = monster_unlock[Math.floor(Math.random() * monster_unlock.length)];
+  const monsterData = MONSTER_CONFIG.find(monster => monster.id == monsterId);
+  console.log(monsterData);
+  monsters.push(new Monster(monsterPath, monsterImages, monsterLevel, monsterData));
 }
 
 function gameLoop() {
@@ -244,6 +265,8 @@ function gameLoop() {
   if(score >= 2000 * monsterLevel){
     monsterLevel++;
     userGold+= 1000;
+
+    stage = stage < MONSTER_UNLOCK_CONFIG.length ? stage+1 : stage;
   }
 
   // 몬스터가 공격을 했을 수 있으므로 기지 다시 그리기
