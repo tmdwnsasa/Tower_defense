@@ -52,24 +52,10 @@
       });
 
       document.getElementById('playButton').addEventListener('click', async () => {
-        if (!document.cookie.includes('authorization')) {
-          alert('로그인 필요');
-          window.location.href = 'login.html';
+        const result = await import('./src/user.js');
+        if (!result.id) {
           return;
         }
-        const res = await fetch('http://localhost:3000/api/auth', {
-          method: 'get',
-          credentials: 'include',
-        });
-        if (!res.ok) {
-          alert('로그인 실패');
-          const result = await res.json();
-          console.log(result.errorMessage);
-          return;
-        }
-
-        const result = await res.json();
-        alert(result.message);
 
         document.querySelector('.button-container').style.display = 'none';
         document.getElementById('gameCanvas').style.display = 'block';

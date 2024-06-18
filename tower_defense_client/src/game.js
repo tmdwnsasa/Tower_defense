@@ -3,39 +3,10 @@ import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import './Socket.js';
 import { connectServer } from './Socket.js';
+import { id } from './user.js';
 
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
-*/
-/* 쿠키에 저장된 JWT 확인용 샘플 코드
-function getCookie(cName) {
-  cName = cName + '=';
-  const cookieData = document.cookie;
-  let start = cookieData.indexOf(cName);
-  let cValue = null;
-  if (start != -1) {
-    start += cName.length;
-    var end = cookieData.indexOf(';', start);
-    if (end == -1) end = cookieData.length;
-    cValue = cookieData.substring(start, end);
-  }
-  return cValue;
-}
-try {
-  const authorization = getCookie('authorization');
-
-  if (!authorization) {
-    alert('로그인 필요');
-    window.location.href = 'login.html';
-  }
-} catch (err) {
-  switch (err.name) {
-    case 'JsonWebTokenError':
-      alert('토큰이 잘못되었습니다.');
-    default:
-      alert(err.message ?? '비정상적인 요청입니다.');
-  }
-}
 */
 
 let serverSocket; // 서버 웹소켓 객체

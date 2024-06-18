@@ -103,7 +103,7 @@ router.get('/auth', async (req, res, next) => {
       throw new Error('토큰 사용자가 존재하지 않습니다.');
     }
 
-    return res.status(200).json({ message: '토큰 사용자 인증이 완료되었습니다.' });
+    return res.status(200).json({ message: '토큰 사용자 인증이 완료되었습니다.', data: { userId } });
   } catch (err) {
     res.clearCookie('authorization');
 
