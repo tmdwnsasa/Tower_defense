@@ -7,6 +7,7 @@ import { connectServer } from './Socket.js';
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
+/* 쿠키에 저장된 JWT 확인용 샘플 코드
 function getCookie(cName) {
   cName = cName + '=';
   const cookieData = document.cookie;
@@ -35,6 +36,7 @@ try {
       alert(err.message ?? '비정상적인 요청입니다.');
   }
 }
+*/
 
 let serverSocket; // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
@@ -190,13 +192,13 @@ function placeNewTower() {
     타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치하면 됩니다.
     빠진 코드들을 채워넣어주세요! 
   */
-  if(userGold < towerCost){
+  if (userGold < towerCost) {
     return;
   }
 
   userGold -= towerCost;
   console.log(userGold);
-    
+
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y);
   towers.push(tower);
@@ -241,9 +243,9 @@ function gameLoop() {
   });
 
   // 몬스터 레벨 업 및 1000골드 지급
-  if(score >= 2000 * monsterLevel){
+  if (score >= 2000 * monsterLevel) {
     monsterLevel++;
-    userGold+= 1000;
+    userGold += 1000;
   }
 
   // 몬스터가 공격을 했을 수 있으므로 기지 다시 그리기
