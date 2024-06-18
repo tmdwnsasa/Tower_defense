@@ -9,14 +9,14 @@ const router = express.Router();
 // 회원가입 API
 router.post('/signUp', async (req, res, next) => {
   try {
-    const { id: userId, password } = req.body;
+    const { id, password } = req.body;
 
-    if (!userId || !password) {
+    if (!id || !password) {
       return res.status(401).json({ errorMessage: '입력 값이 잘못되었습니다.' });
     }
     // 아이디 중복 확인 테스트
     const isExistUser = await prisma.user.findUnique({
-      where: { userId },
+      where: { id },
     });
     if (isExistUser) {
       return res.status(409).json({ errorMessage: '이미 존재하는 아이디입니다.' });
@@ -27,11 +27,10 @@ router.post('/signUp', async (req, res, next) => {
     // 유저 생성
     await prisma.user.create({
       data: {
-        userId,
+        id,
         password: hashedPassword,
       },
     });
-
     return res.status(201).json({ message: '회원가입이 완료되었습니다.' });
   } catch (err) {
     return res.status(500).json({ errorMessage: '서버 내부 에러가 발생했습니다.' });
@@ -41,16 +40,17 @@ router.post('/signUp', async (req, res, next) => {
 // 로그인 API
 router.post('/signIn', async (req, res, next) => {
   try {
-    const { id: userId, password } = req.body;
+    const { id: id, password } = req.body;
 
-    if (!userId || !password) {
+    if (!id || !password) {
       return res.status(401).json({ errorMessage: '입력 값이 잘못되었습니다.' });
     }
 
     // 유저 존재 유무 확인
     const user = await prisma.user.findUnique({
-      where: { userId },
+      where: { id },
     });
+    console.log(user);
     if (!user) {
       return res.status(404).json({ errorMessage: '존재하지 않는 아이디입니다.' });
     }
@@ -62,7 +62,7 @@ router.post('/signIn', async (req, res, next) => {
 
     const token = jwt.sign(
       {
-        userId,
+        id,
       },
       configs.tokenSecretKey
     );

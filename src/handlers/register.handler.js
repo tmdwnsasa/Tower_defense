@@ -1,15 +1,15 @@
 import { addUser } from '../models/user.model.js';
-import { handleConnection, handleDiscnnect, handlerEvent } from './helper.js';
+import { handleConnection, handleDisconnect, handlerEvent } from './helper.js';
 
 const registerHandler = (io) => {
   io.on('connection', (socket) => {
-    const userId = '';
-    addUser({ uuid: userUUID, socketId: socket.id });
-    handleConnection(socket, userUUID);
+    const id = '';
+    addUser({ id: id, socketId: socket.id });
+    handleConnection(socket, id);
 
     socket.on('event', (data) => handlerEvent(io, socket, data));
     socket.on('disconnect', (socket) => {
-      handleDiscnnect(socket, userUUID);
+      handleDisconnect(socket, userUUID);
     });
   });
 };

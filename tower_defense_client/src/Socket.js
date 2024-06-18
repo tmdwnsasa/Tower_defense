@@ -1,9 +1,10 @@
 import { CLIENT_VERSION } from './Constants.js';
 
-let userId = null;
+let id = null;
+let socket;
 
 const connectServer = () => {
-  const socket = io('http://localhost:3000', {
+  socket = io('http://localhost:3000', {
     query: {
       clientVersion: CLIENT_VERSION,
     },
@@ -12,13 +13,14 @@ const connectServer = () => {
   socket.on('response', (data) => {});
 
   socket.on('connection', (data) => {
-    userId = data.uuid;
+    id = data.id;
+    console.log(data.id);
   });
 };
 
 const sendEvent = (handlerId, payload) => {
   socket.emit('event', {
-    userId,
+    id,
     clientVersion: CLIENT_VERSION,
     handlerId,
     payload,
