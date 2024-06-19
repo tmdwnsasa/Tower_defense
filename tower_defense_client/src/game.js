@@ -5,18 +5,39 @@ import './Socket.js';
 import { connectServer, sendEvent } from './Socket.js';
 import { id } from './user.js';
 
+import stageData from '../assets/stage.json' with { type: 'json' };
+import monsterData from '../assets/monster.json' with { type: 'json' };
+import monsterUnlockData from '../assets/monster_unlock.json' with { type: 'json' };
+import initData from '../assets/init.json' with { type: 'json' };
+
+/* 
+  어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
+*/
+
 let serverSocket; // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 
+// 시작 데이터 정보
+const INIT_DATA = initData.data;
+
+// 몬스터
+const MONSTER_CONFIG = monsterData.data;
+const MONSTER_UNLOCK_CONFIG = monsterUnlockData.data;
+
+// 스테이지 정보
+const STAGE_DATA = stageData.data;
+
+const stageOffset = 1000;
+let stage = 1000;
 // ----- 서버 데이터 -----
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
-let baseHp = 100; // 기지 체력
+let baseHp = 0; // 기지 체력
 
-const towerCost = 1000; // 타워 구입 비용
+const towerCost = 100; // 타워 구입 비용
 const upgradeCost = 2000; // 타워 업그레이드 비용
 
 let numOfInitialTowers = 3; // 초기 타워 개수
@@ -49,9 +70,10 @@ const pathImage = new Image();
 pathImage.src = 'images/path.png';
 
 const monsterImages = [];
-for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
+for (let i = 0; i < NUM_OF_MONSTERS; i++) {
   const img = new Image();
-  img.src = `images/monster${i}.png`;
+  //console.log(MONSTER_CONFIG[i].image);
+  img.src = MONSTER_CONFIG[i].image;
   monsterImages.push(img);
 }
 
@@ -143,6 +165,11 @@ function getRandomPositionNearPath(maxDistance) {
 }
 
 function placeInitialTowers() {
+  /* 
+    타워를 초기에 배치하는 함수입니다.
+    무언가 빠진 코드가 있는 것 같지 않나요? 
+  */
+  numOfInitialTowers = +INIT_DATA.numOfInitialTowers;
   for (let i = 0; i < numOfInitialTowers; i++) {
     const eventId = 42 ;
     const { x, y } = getRandomPositionNearPath(200);
@@ -285,7 +312,11 @@ function placeBase() {
 }
 
 function spawnMonster() {
-  monsters.push(new Monster(monsterPath, monsterImages, monsterLevel));
+  const monster_unlock = MONSTER_UNLOCK_CONFIG[stage-stageOffset].monster_ids;
+  const monsterId = monster_unlock[Math.floor(Math.random() * monster_unlock.length)];
+  const monsterData = MONSTER_CONFIG.find(monster => monster.id == monsterId);
+  // console.log(monsterData);
+  monsters.push(new Monster(monsterPath, monsterImages, monsterLevel, monsterData));
 }
 
 function gameLoop() {
@@ -315,8 +346,16 @@ function gameLoop() {
 
   if (score >= 2000 * monsterLevel) {
     monsterLevel++;
-    userGold += 1000;
-    updateGoldDisplay();
+    userGold+= 1000;
+
+    let prevStage = stage;
+    stage = stage+1 < MONSTER_UNLOCK_CONFIG.length+stageOffset ? stage+1 : stage;
+
+    //console.log("prevStage, stage: ", prevStage, stage);
+    if(prevStage !== stage){
+      sendEvent(11, {currentStage: prevStage, targetStage: stage});
+    }
+    
   }
 
   base.draw(ctx, baseImage);
@@ -346,8 +385,14 @@ function initGame() {
   if (isInitGame) {
     return;
   }
+  
+  // 시작 데이터 적용
+  userGold = +INIT_DATA.userGold;
+  baseHp = +INIT_DATA.baseHp;
+  //towerCost = +INIT_DATA.towerCost;
 
-  sendEvent(2, {});
+  // 시작 이벤트 발동(초기화 용)
+  sendEvent(2, {timestamp: Date.now()});
 
   monsterPath = generateRandomMonsterPath();
   initMap();
