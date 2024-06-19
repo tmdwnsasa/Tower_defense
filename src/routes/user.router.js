@@ -50,7 +50,6 @@ router.post('/signIn', async (req, res, next) => {
     const user = await prisma.user.findUnique({
       where: { id },
     });
-    console.log(user);
     if (!user) {
       return res.status(404).json({ errorMessage: '존재하지 않는 아이디입니다.' });
     }
