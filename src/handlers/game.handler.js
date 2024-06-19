@@ -16,7 +16,7 @@ export const gameEnd = (id, payload) => {
   // if () {
   //   return { status: 'fail', message: 'score verification failed' };
   // }
-  const monstersInfo = getUserMonstersInfo();
+  const monstersInfo = getUserMonstersInfo(id);
   let totalScore = 0;
   const socorePerMonster = 100;
   const errorRange = 1 * socorePerMonster;
@@ -28,7 +28,11 @@ export const gameEnd = (id, payload) => {
   }
 
   //DB에 저장한다면 여기서
-  addGameResult(userId, payload);
+  const data = {
+    timestamp: new Date(gameEndTime),
+    score,
+  };
+  addGameResult(id, data);
 
   return { status: 'success', message: 'Game ended', score };
 };
