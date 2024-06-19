@@ -14,9 +14,9 @@ import { prisma } from '../utils/prisma/index.js';
 
 // 최고 점수 조회
 export const getHighScore = async (userId) => {
-  const user = await prisma.GameResultLog.findFirst({
+  const user = await prisma.gameResultLog.findFirst({
     where: {
-      userId,
+      id: userId,
     },
     orderBy: {
       score: 'desc',
@@ -32,9 +32,9 @@ export const getHighScore = async (userId) => {
 
 // 게임 결과 이력 추가
 export const addGameResult = async (userId, data) => {
-  const gameResult = await prisma.GameResultLog.create({
+  const gameResult = await prisma.gameResultLog.create({
     data: {
-      userId,
+      id: userId,
       score: data.score,
       timestamp: data.timestamp,
     },
@@ -43,13 +43,13 @@ export const addGameResult = async (userId, data) => {
 
 // 게임 결과 이력 조회
 export const getGameResults = async (userId, take = 10) => {
-  const gameResults = await prisma.GameResultLog.findMany({
+  const gameResults = await prisma.gameResultLog.findMany({
     data: {
       score: true,
       timestamp: true,
     },
     where: {
-      userId,
+      id: userId,
     },
     orderBy: {
       timestamp: 'desc',
@@ -63,9 +63,9 @@ export const getGameResults = async (userId, take = 10) => {
 
 // 랭킹 조회
 export const getranking = async (take = 10) => {
-  const ranking = await prisma.GameResultLog.findMany({
+  const ranking = await prisma.gameResultLog.findMany({
     data: {
-      userId: true,
+      id: true,
       score: true,
     },
     orderBy: {
