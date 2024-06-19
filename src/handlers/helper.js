@@ -15,7 +15,6 @@ export const handlerEvent = (io, socket, data) => {
     socket.emit('response', { status: 'fail', message: 'Wrong client version' });
     return;
   }
-  console.log(data.id);
   const handler = handlerMappings[data.handlerId];
   if (!handler) {
     socket.emit('response', { status: 'fail', message: 'Handler not found' });
