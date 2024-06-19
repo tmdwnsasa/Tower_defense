@@ -11,7 +11,11 @@ const connectServer = (id) => {
   });
 
   socket.on('response', (data) => {
-    console.log(data);
+    if (data.status === 'fail') {
+      console.error(data.message);
+    } else {
+      console.log(data);
+    }
   });
 
   socket.on('connection', (data) => {

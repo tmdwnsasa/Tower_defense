@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# prisma 폴더 내 migrations 폴더를 무시
+prisma/migrations/
