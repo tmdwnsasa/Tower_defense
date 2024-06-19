@@ -336,10 +336,7 @@ function initGame() {
     return;
   }
 
-  sendEvent(2, {});
-
   highScore = getData('highScore');
-  console.log('1', getData('highScore'));
   monsterPath = generateRandomMonsterPath();
   initMap();
   placeInitialTowers();
@@ -358,7 +355,7 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   serverSocket = connectServer(id);
-
+  sendEvent(2, {});
   // let somewhere;
   // serverSocket = io('서버주소', {
   //   auth: {
@@ -372,19 +369,13 @@ Promise.all([
     이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
   */
   serverSocket.on('response', (data) => {
-    if (data.status === 'fail') {
-      console.error(data.message);
-    } else {
-      console.log(data);
-      if (data.highScore) {
-        highScore = data.highScore;
-      }
+    if (data.status === 'success' && !isInitGame) {
+      initGame();
     }
   });
-
-  if (!isInitGame) {
-    initGame();
-  }
+  // if (!isInitGame) {
+  //   initGame();
+  // }
 });
 
 const buyTowerButton = document.createElement('button');
