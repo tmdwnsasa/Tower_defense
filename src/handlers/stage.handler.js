@@ -2,9 +2,8 @@ import { getGameAssets } from '../init/assets.js';
 import { getStage, setStage } from '../models/stage.model.js';
 
 export const moveStageHandler = (userId, payload) => {
-  // currentStage, targetStage
-  // 유저의 현재 스테이지 정보
-  let currentStages = getStage(userId);
+
+  let currentStages = getStage(userId); // 서버가 가지고 있는 유저의 현재 스테이지 정보
   if (!currentStages.length) {
     return { status: 'fail', message: 'No stages found for user' };
   }
@@ -18,23 +17,16 @@ export const moveStageHandler = (userId, payload) => {
     return { status: 'fail', message: 'Current Stage mismatch' };
   }
 
-//   // 점수 검증
-//   const serverTime = Date.now(); // 현재 타임스탬프
-//   const elapsedTime = (serverTime - currentStage.timestamp) / 1000;
-
-//   // 1스테이지 -> 2스테이지로 넘어가는 과정
-//   // 100ms~105ms: 임의로 정한 오차범위
-//   if (elapsedTime < 100 || elapsedTime > 105) {
-//     return { status: 'fail', message: 'Invalid elapsedTime' };
-//   }
-
   // targetStage 대한 검증 <- 게임 에셋에 존재하는가?
   const { stages } = getGameAssets();
   if (!stages.data.some(stage => stage.id === payload.targetStage)) {
-    return { status: 'fail', message: 'Target stage not found' };
+    return { status: 'fail', message: `Target stage(${payload.targetStage}) not found` };
   }
 
-  setStage(userId, payload.targetStage, serverTime);
+  const serverTime = Date.now(); // 현재 타임스탬프
+  
+  const updatedStageInfo = setStage(userId, payload.targetStage, serverTime);
+  // console.log("stageHandler >> setStage:  ", updatedStageInfo);
 
   return { status: 'success' };
 };

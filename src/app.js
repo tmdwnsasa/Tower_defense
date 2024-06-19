@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 server.listen(PORT, async () => {
   try {
     const assets = await loadGameAssets();
-    console.log(assets);
+    //console.log(assets);
     //리소스 로딩 하는 곳
     console.log('Success');
   } catch (err) {

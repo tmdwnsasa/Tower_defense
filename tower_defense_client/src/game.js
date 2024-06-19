@@ -30,7 +30,8 @@ const MONSTER_UNLOCK_CONFIG = monsterUnlockData.data;
 // 스테이지 정보
 const STAGE_DATA = stageData.data;
 
-let stage = 0;
+const stageOffset = 1000;
+let stage = 1000;
 // ----- 서버 데이터 -----
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
@@ -71,7 +72,7 @@ pathImage.src = 'images/path.png';
 const monsterImages = [];
 for (let i = 0; i < NUM_OF_MONSTERS; i++) {
   const img = new Image();
-  console.log(MONSTER_CONFIG[i].image);
+  //console.log(MONSTER_CONFIG[i].image);
   img.src = MONSTER_CONFIG[i].image;
   monsterImages.push(img);
 }
@@ -300,10 +301,10 @@ function placeBase() {
 }
 
 function spawnMonster() {
-  const monster_unlock = MONSTER_UNLOCK_CONFIG[stage].monster_ids;
+  const monster_unlock = MONSTER_UNLOCK_CONFIG[stage-stageOffset].monster_ids;
   const monsterId = monster_unlock[Math.floor(Math.random() * monster_unlock.length)];
   const monsterData = MONSTER_CONFIG.find(monster => monster.id == monsterId);
-  console.log(monsterData);
+  // console.log(monsterData);
   monsters.push(new Monster(monsterPath, monsterImages, monsterLevel, monsterData));
 }
 
@@ -336,7 +337,14 @@ function gameLoop() {
     monsterLevel++;
     userGold+= 1000;
 
-    stage = stage < MONSTER_UNLOCK_CONFIG.length ? stage+1 : stage;
+    let prevStage = stage;
+    stage = stage+1 < MONSTER_UNLOCK_CONFIG.length+stageOffset ? stage+1 : stage;
+
+    //console.log("prevStage, stage: ", prevStage, stage);
+    if(prevStage !== stage){
+      sendEvent(11, {currentStage: prevStage, targetStage: stage});
+    }
+    
   }
 
   base.draw(ctx, baseImage);
@@ -371,7 +379,7 @@ function initGame() {
   //towerCost = +INIT_DATA.towerCost;
 
   // 시작 이벤트 발동(초기화 용)
-  sendEvent(2, {});
+  sendEvent(2, {timestamp: Date.now()});
 
   monsterPath = generateRandomMonsterPath();
   initMap();
