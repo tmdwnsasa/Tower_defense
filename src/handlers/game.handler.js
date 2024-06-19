@@ -3,14 +3,14 @@ import { initializeBase } from '../models/base.model.js';
 import { addGameResult, getHighScore } from '../models/score.model.js';
 import { addTower, removeTower, upgradeTower } from '../models/tower.model.js';
 
-export const gameStart = (id, payload) => {
+export const gameStart = async (id, payload) => {
   initializeMonsters(id);
   initializeBase(id);
-  const highScore = getHighScore(id).then((highScore) => highScore);
+  const highScore = await getHighScore(id);
   return { status: 'success', highScore };
 };
 
-export const gameEnd = (id, payload) => {
+export const gameEnd = async (id, payload) => {
   const { timestamp: gameEndTime, score } = payload;
 
   // 점수 검증
@@ -31,7 +31,7 @@ export const gameEnd = (id, payload) => {
     score,
   };
   addGameResult(id, data);
-  const highScore = getHighScore(id).then((highScore) => highScore);
+  const highScore = await getHighScore(id);
 
   return { status: 'success', message: 'Game ended', score, highScore };
 };

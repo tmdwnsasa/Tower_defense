@@ -25,6 +25,8 @@ const connectServer = (id) => {
   });
 
   socket.on('connection', (data) => {});
+
+  return socket;
 };
 
 const sendEvent = (handlerId, payload) => {
@@ -38,6 +40,16 @@ const sendEvent = (handlerId, payload) => {
 
 const getData = (dataName) => {
   let data;
+  // socket.on('response', (data) => {
+  //   if (data.status === 'fail') {
+  //     console.error(data.message);
+  //   } else {
+  //     console.log(data);
+  //     if (data.highScore) {
+  //       highScore = data.highScore;
+  //     }
+  //   }
+  // });
   switch (dataName) {
     case 'highScore':
       data = highScore;
@@ -45,6 +57,7 @@ const getData = (dataName) => {
     default:
       data = null;
   }
+
   return data;
 };
 

@@ -7,7 +7,7 @@ const registerHandler = (io) => {
     addUser({ id: id, socketId: socket.id });
     handleConnection(socket, id);
 
-    socket.on('event', (data) => handlerEvent(io, socket, data));
+    socket.on('event', async (data) => await handlerEvent(io, socket, data));
     socket.on('disconnect', (socket) => {
       handleDisconnect(socket, id);
     });

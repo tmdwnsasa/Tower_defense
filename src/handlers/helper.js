@@ -10,7 +10,7 @@ export const handleConnection = (socket, id) => {
   socket.emit('connection', { id });
 };
 
-export const handlerEvent = (io, socket, data) => {
+export const handlerEvent = async (io, socket, data) => {
   if (!CLIENT_VERSION.includes(data.clientVersion)) {
     socket.emit('response', { status: 'fail', message: 'Wrong client version' });
     return;
@@ -21,7 +21,7 @@ export const handlerEvent = (io, socket, data) => {
     return;
   }
 
-  const response = handler(data.userid, data.payload);
+  const response = await handler(data.userid, data.payload);
 
   if (response.broadcast) {
     io.emit('response', 'response');
