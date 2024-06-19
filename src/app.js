@@ -16,7 +16,7 @@ app.use(express.static('tower_defense_client'));
 app.use(cookieParser());
 app.use('/api', [userRouter]);
 
-// initSocket(server);
+initSocket(server);
 
 app.get('/', (req, res) => {
   return res.status(200).json({ message: 'Hello World!' });

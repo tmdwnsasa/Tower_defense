@@ -276,6 +276,7 @@ function initGame() {
   baseHp = +INIT_DATA.baseHp;
   towerCost = +INIT_DATA.towerCost;
 
+  // 시작 이벤트 발동(초기화 용)
   sendEvent(2, {});
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성

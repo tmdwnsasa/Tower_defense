@@ -4,6 +4,7 @@ import { initializeBase } from '../models/base.model.js';
 export const gameStart = (userId, payload) => {
   initializeMonsters(userId);
   initializeBase(userId);
+  
   return { status: 'success' };
 };
 
