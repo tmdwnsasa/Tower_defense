@@ -1,6 +1,9 @@
-import { initializeMonsters } from '../models/monster.model.js';
-import { initializeBase } from '../models/base.model.js'; 
+
 import { prisma } from '../utils/prisma/index.js'; // Prisma 클라이언트 임포트
+import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model.js';
+import { initializeBase } from '../models/base.model.js';
+import { addGameResult } from '../models/score.model.js';
+import { addTower, removeTower, upgradeTower } from '../models/tower.model.js';
 
 export const gameStart = (id, payload) => {
   initializeMonsters(id);
@@ -10,29 +13,29 @@ export const gameStart = (id, payload) => {
 
 export const gameEnd = async (userId, payload) => {
   const { timestamp: gameEndTime, score } = payload;
+  // 점수 검증
+  // if () {
+  //   return { status: 'fail', message: 'score verification failed' };
+  // }
+  const monstersInfo = getUserMonstersInfo(id);
+  let totalScore = 0;
+  const socorePerMonster = 100;
+  const errorRange = 1 * socorePerMonster;
 
-  // 점수 검증 로직 추가 
-  if (score < 0) {
-    return { status: 'fail', message: 'Invalid score' };
+  totalScore = monstersInfo.data.reduce((acc, cur) => acc + cur.cnt * socorePerMonster, totalScore);
+
+  if (Math.abs(score - totalScore) > errorRange) {
+    return { status: 'fail', message: 'Score verification failed' };
   }
 
-  try {
-    // 데이터베이스에 점수를 저장하는 로직 추가 
-    await prisma.$transaction([
-      prisma.gameResultLog.create({
-        data: {
-          id: userId,
-          score: score,
-          timestamp: new Date(gameEndTime),
-        },
-      }),
-    ]);
+  //DB에 저장한다면 여기서
+  const data = {
+    timestamp: new Date(gameEndTime),
+    score,
+  };
+  addGameResult(id, data);
 
-    return { status: 'success', message: 'Game ended', score };
-  } catch (error) {
-    console.error('Error saving game result:', error);
-    return { status: 'fail', message: 'Failed to save game result' };
-  }
+  return { status: 'success', message: 'Game ended', score };
 };
 
 
