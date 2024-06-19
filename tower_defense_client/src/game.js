@@ -36,7 +36,7 @@ let userGold = 0; // 유저 골드
 let base; // 기지 객체
 let baseHp = 0; // 기지 체력
 
-const towerCost = 1000; // 타워 구입 비용
+const towerCost = 100; // 타워 구입 비용
 const upgradeCost = 2000; // 타워 업그레이드 비용
 
 let numOfInitialTowers = 3; // 초기 타워 개수
@@ -368,7 +368,7 @@ function initGame() {
   // 시작 데이터 적용
   userGold = +INIT_DATA.userGold;
   baseHp = +INIT_DATA.baseHp;
-  towerCost = +INIT_DATA.towerCost;
+  //towerCost = +INIT_DATA.towerCost;
 
   // 시작 이벤트 발동(초기화 용)
   sendEvent(2, {});
