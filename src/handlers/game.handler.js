@@ -1,23 +1,39 @@
-import { initializeMonsters } from '../models/monster.model.js';
+import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model.js';
 import { initializeBase } from '../models/base.model.js';
+import { addGameResult, getHighScore } from '../models/score.model.js';
 import { addTower, removeTower, upgradeTower } from '../models/tower.model.js';
 
 export const gameStart = (id, payload) => {
   initializeMonsters(id);
   initializeBase(id);
-  return { status: 'success' };
+  const highScore = getHighScore(id).then((highScore) => highScore);
+  return { status: 'success', highScore };
 };
 
 export const gameEnd = (id, payload) => {
   const { timestamp: gameEndTime, score } = payload;
 
   // 점수 검증
-  // if () {
-  //   return { status: 'fail', message: 'score verification failed' };
-  // }
+  const monstersInfo = getUserMonstersInfo(id);
+  let totalScore = 0;
+  const socorePerMonster = 100;
+  const errorRange = 1 * socorePerMonster;
+
+  totalScore = monstersInfo.data.reduce((acc, cur) => acc + cur.cnt * socorePerMonster, totalScore);
+
+  if (Math.abs(score - totalScore) > errorRange) {
+    return { status: 'fail', message: 'Score verification failed' };
+  }
 
   //DB에 저장한다면 여기서
-  return { status: 'success', message: 'Game ended', score };
+  const data = {
+    timestamp: new Date(gameEndTime),
+    score,
+  };
+  addGameResult(id, data);
+  const highScore = getHighScore(id).then((highScore) => highScore);
+
+  return { status: 'success', message: 'Game ended', score, highScore };
 };
 
 export const handleTowerEvent = (userId, payload, eventId) => {

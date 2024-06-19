@@ -2,6 +2,8 @@ import { CLIENT_VERSION } from './Constants.js';
 
 let userid = null;
 let socket;
+let highScore;
+
 const connectServer = (id) => {
   socket = io('http://localhost:3000', {
     query: {
@@ -16,6 +18,9 @@ const connectServer = (id) => {
       console.error(data.message);
     } else {
       console.log(data);
+      if (data.highScore) {
+        highScore = data.highScore;
+      }
     }
   });
 
@@ -31,4 +36,16 @@ const sendEvent = (handlerId, payload) => {
   });
 };
 
-export { connectServer, sendEvent };
+const getData = (dataName) => {
+  let data;
+  switch (dataName) {
+    case 'highScore':
+      data = highScore;
+      break;
+    default:
+      data = null;
+  }
+  return data;
+};
+
+export { connectServer, sendEvent, getData };
