@@ -2,7 +2,7 @@ import { CLIENT_VERSION } from './Constants.js';
 
 let userId = null;
 let socket;
-let highScore;
+let highScore = 0;
 
 const connectServer = (id) => {
   socket = io('http://localhost:3000', {
