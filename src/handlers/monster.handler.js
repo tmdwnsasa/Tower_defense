@@ -1,12 +1,11 @@
 import { getMonsterLevel, increaseMonsterKillCount } from '../models/monster.model.js';
 
 export const addMonsterKillCount = (userId, payload) => {
-  const { monsterlevel } = payload;
+  const { monsterLevel } = payload;
   const currentLevel = getMonsterLevel(userId);
-  if (monsterlevel > currentLevel) {
-    return { status: 'fail', message: 'MonsterLevel is not matched' };
+  if (monsterLevel > currentLevel) {
+    return { status: 'fail', message: `monsterLevel(${monsterLevel}) is not matched` };
   }
-
-  increaseMonsterKillCount(userId, monsterlevel);
+  increaseMonsterKillCount(userId, monsterLevel);
   return { status: 'success' };
 };

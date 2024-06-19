@@ -1,6 +1,6 @@
 import { CLIENT_VERSION } from './Constants.js';
 
-let userid = null;
+let userId = null;
 let socket;
 let highScore;
 
@@ -11,7 +11,7 @@ const connectServer = (id) => {
       id: id,
     },
   });
-  userid = id;
+  userId = id;
 
   socket.on('response', (data) => {
     if (data.status === 'fail') {
@@ -31,7 +31,7 @@ const connectServer = (id) => {
 
 const sendEvent = (handlerId, payload) => {
   socket.emit('event', {
-    userid,
+    userId,
     clientVersion: CLIENT_VERSION,
     handlerId,
     payload,

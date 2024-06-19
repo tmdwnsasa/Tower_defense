@@ -2,6 +2,7 @@ const users = [];
 
 export const addUser = (user) => {
   users.push(user);
+  console.log("addUser: Current users: ", users);
 };
 
 export const removeUser = (socketId) => {
