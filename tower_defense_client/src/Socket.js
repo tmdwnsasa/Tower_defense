@@ -1,6 +1,6 @@
 import { CLIENT_VERSION } from './Constants.js';
 
-let id = null;
+let userId = null;
 let socket;
 const connectServer = (id) => {
   socket = io('http://localhost:3000', {
@@ -9,6 +9,7 @@ const connectServer = (id) => {
       id: id,
     },
   });
+  userId = id;
 
   socket.on('response', (data) => {
     if (data.status === 'fail') {
@@ -18,16 +19,12 @@ const connectServer = (id) => {
     }
   });
 
-  socket.on('connection', (data) => {
-    console.log('connection: ', data);
-    id = data.id;
-  });
+  socket.on('connection', (data) => {});
 };
 
 const sendEvent = (handlerId, payload) => {
-  console.log('event');
   socket.emit('event', {
-    id,
+    userid: userId,
     clientVersion: CLIENT_VERSION,
     handlerId,
     payload,
@@ -35,3 +32,4 @@ const sendEvent = (handlerId, payload) => {
 };
 
 export { connectServer, sendEvent };
+

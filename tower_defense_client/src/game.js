@@ -144,14 +144,15 @@ function getRandomPositionNearPath(maxDistance) {
 
 function placeInitialTowers() {
   for (let i = 0; i < numOfInitialTowers; i++) {
+    const eventId = 42 ;
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(x, y, towerCost, towerImage);
     towers.push(tower);
     tower.draw(ctx);
     console.log('Event ID: 42'); 
-    sendEvent(42, { x, y }); // 초기 타워 배치 이벤트
+    sendEvent(42, { x, y , eventId}); // 초기 타워 배치 이벤트
   }
-}
+} 
 
 function placeNewTower() {
   if (userGold < towerCost) {
@@ -161,24 +162,27 @@ function placeNewTower() {
 
   userGold -= towerCost;
 
+  const eventId = 43 ;
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y, towerCost, towerImage);
     towers.push(tower);
     tower.draw(ctx);
     console.log('Event ID: 43'); 
-    sendEvent(43, { x, y }); // 타워 구입 이벤트
+    sendEvent(43, { x, y , eventId }); // 타워 구입 이벤트 
     updateGoldDisplay();
+    
 }
 
 function refundTower(tower) {
+  const eventId = 44;
   const index = towers.indexOf(tower);
   if (index !== -1) {
     towers.splice(index, 1);
     userGold += tower.getRefundAmount();
     console.log('Event ID: 44'); 
-    sendEvent(44, { x: tower.x, y: tower.y }); // 타워 환불 이벤트
+    sendEvent(44, { x: tower.x, y: tower.y , eventId }); // 타워 환불 이벤트
     updateGoldDisplay();
-  }
+  } 
 }
 
 function showMessage(message) {
@@ -205,10 +209,7 @@ canvas.addEventListener('click', (event) => {
   const y = event.offsetY;
 
   for (const tower of towers) {
-    if (
-      x >= tower.x && x <= tower.x + tower.width &&
-      y >= tower.y && y <= tower.y + tower.height
-    ) {
+    if (x >= tower.x && x <= tower.x + tower.width && y >= tower.y && y <= tower.y + tower.height) {
       if (isUpgrading) {
         upgradeTower(tower);
         isUpgrading = false;
@@ -237,8 +238,9 @@ function upgradeTower(tower) {
   userGold -= upgradeCost;
   
   tower.upgrade();
+  const eventId = 45;
   console.log('Event ID: 45'); 
-  sendEvent(45, { x: tower.x, y: tower.y }); // 타워 업그레이드 이벤트
+  sendEvent(45, { x: tower.x, y: tower.y, eventId }); // 타워 업그레이드 이벤트
   showMessage('업그레이드가 완료되었습니다.');
   updateGoldDisplay();
 }
@@ -363,13 +365,19 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   connectServer(id);
-  let somewhere;
-  serverSocket = io('서버주소', {
-    auth: {
-      token: somewhere,
-    },
-  });
 
+  // let somewhere;
+  // serverSocket = io('서버주소', {
+  //   auth: {
+  //     token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
+  //   },
+  // });
+
+  /* 
+    서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
+    e.g. serverSocket.on("...", () => {...});
+    이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
+  */
   if (!isInitGame) {
     initGame();
   }

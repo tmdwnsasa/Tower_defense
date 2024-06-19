@@ -15,14 +15,13 @@ export const handlerEvent = (io, socket, data) => {
     socket.emit('response', { status: 'fail', message: 'Wrong client version' });
     return;
   }
-  console.log(data.id);
   const handler = handlerMappings[data.handlerId];
   if (!handler) {
     socket.emit('response', { status: 'fail', message: 'Handler not found' });
     return;
   }
 
-  const response = handler(data.userId, data.payload);
+  const response = handler(data.userid, data.payload); 
 
   if (response.broadcast) {
     io.emit('response', 'response');
