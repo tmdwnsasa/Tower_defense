@@ -144,13 +144,15 @@ function getRandomPositionNearPath(maxDistance) {
 
 function placeInitialTowers() {
   for (let i = 0; i < numOfInitialTowers; i++) {
+    const eventId = 42 ;
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(x, y, towerCost, towerImage);
     towers.push(tower);
     tower.draw(ctx);
-    sendEvent(42, { x, y }); // 이벤트 ID 42는 초기 타워 배치 이벤트
+    console.log('Event ID: 42'); 
+    sendEvent(42, { x, y , eventId}); // 초기 타워 배치 이벤트
   }
-}
+} 
 
 function placeNewTower() {
   if (userGold < towerCost) {
@@ -160,22 +162,27 @@ function placeNewTower() {
 
   userGold -= towerCost;
 
+  const eventId = 43 ;
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y, towerCost, towerImage);
-  towers.push(tower);
-  tower.draw(ctx);
-  sendEvent(43, { x, y }); // 이벤트 ID 43은 타워 구입 이벤트
-  updateGoldDisplay();
+    towers.push(tower);
+    tower.draw(ctx);
+    console.log('Event ID: 43'); 
+    sendEvent(43, { x, y , eventId }); // 타워 구입 이벤트 
+    updateGoldDisplay();
+    
 }
 
 function refundTower(tower) {
+  const eventId = 44;
   const index = towers.indexOf(tower);
   if (index !== -1) {
     towers.splice(index, 1);
     userGold += tower.getRefundAmount();
-    sendEvent(44, { x: tower.x, y: tower.y }); // 이벤트 ID 44는 타워 환불 이벤트
+    console.log('Event ID: 44'); 
+    sendEvent(44, { x: tower.x, y: tower.y , eventId }); // 타워 환불 이벤트
     updateGoldDisplay();
-  }
+  } 
 }
 
 function showMessage(message) {
@@ -227,9 +234,13 @@ function upgradeTower(tower) {
     return;
   }
 
+
   userGold -= upgradeCost;
+  
   tower.upgrade();
-  sendEvent(45, { x: tower.x, y: tower.y }); // 이벤트 ID 45는 타워 업그레이드 이벤트
+  const eventId = 45;
+  console.log('Event ID: 45'); 
+  sendEvent(45, { x: tower.x, y: tower.y, eventId }); // 타워 업그레이드 이벤트
   showMessage('업그레이드가 완료되었습니다.');
   updateGoldDisplay();
 }

@@ -32,3 +32,4 @@ const sendEvent = (handlerId, payload) => {
 };
 
 export { connectServer, sendEvent };
+
