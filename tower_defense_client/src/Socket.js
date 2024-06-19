@@ -11,7 +11,13 @@ const connectServer = (id) => {
   });
   userid = id;
 
-  socket.on('response', (data) => {});
+  socket.on('response', (data) => {
+    if (data.status === 'fail') {
+      console.error(data.message);
+    } else {
+      console.log(data);
+    }
+  });
 
   socket.on('connection', (data) => {});
 };
