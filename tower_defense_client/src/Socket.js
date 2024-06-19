@@ -9,7 +9,6 @@ const connectServer = (id) => {
       id: id,
     },
   });
-  userId = id;
 
   socket.on('response', (data) => {
     if (data.status === 'fail') {
@@ -19,7 +18,9 @@ const connectServer = (id) => {
     }
   });
 
-  socket.on('connection', (data) => {});
+  socket.on('connection', (data) => {
+    userId = id;
+  });
 };
 
 const sendEvent = (handlerId, payload) => {
@@ -31,5 +32,9 @@ const sendEvent = (handlerId, payload) => {
   });
 };
 
-export { connectServer, sendEvent };
+const getId = () => {
+  console.log(userId);
+  return userId;
+};
 
+export { connectServer, sendEvent, getId };

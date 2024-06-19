@@ -4,12 +4,10 @@ import { createStage } from '../models/stage.model.js';
 import handlerMappings from './handlerMapping.js';
 
 export const handleDisconnect = (socket, id) => {
-
   removeUser(socket.id);
 };
 
 export const handleConnection = (socket, id) => {
-
   // 스테이지 빈 배열 생성
   createStage(id);
 

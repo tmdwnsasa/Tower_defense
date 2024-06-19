@@ -9,3 +9,11 @@ export const addMonsterKillCount = (userId, payload) => {
   increaseMonsterKillCount(userId, monsterLevel);
   return { status: 'success' };
 };
+
+export const killGoldenGoblin = (userId, payload) => {
+  const { monsterNumber } = payload;
+  if (monsterNumber !== 6) {
+    return { status: 'fail', message: 'it is not Golden Goblin' };
+  }
+  return { status: 'success', gold: 1000 };
+};

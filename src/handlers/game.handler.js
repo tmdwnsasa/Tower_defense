@@ -4,7 +4,6 @@ import { prisma } from '../utils/prisma/index.js'; // Prisma 클라이언트 임
 import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model.js';
 import { initializeBase } from '../models/base.model.js';
 import { addGameResult } from '../models/score.model.js';
-import { addTower, removeTower, upgradeTower } from '../models/tower.model.js';
 
 export const gameStart = (id, payload) => {
   const { stages } = getGameAssets();
