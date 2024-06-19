@@ -269,18 +269,20 @@ Promise.all([
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
   connectServer(id);
-  let somewhere;
-  serverSocket = io('서버주소', {
-    auth: {
-      token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
-    },
-  });
+
+  // let somewhere;
+  // serverSocket = io('서버주소', {
+  //   auth: {
+  //     token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
+  //   },
+  // });
 
   /* 
     서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
     e.g. serverSocket.on("...", () => {...});
     이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
   */
+
   if (!isInitGame) {
     initGame();
   }
