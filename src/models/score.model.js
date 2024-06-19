@@ -20,7 +20,7 @@ export const getHighScore = async (userId) => {
     },
     orderBy: {
       score: 'desc',
-    }
+    },
   });
 
   if (!user) {
@@ -36,7 +36,7 @@ export const addGameResult = async (userId, data) => {
     data: {
       userId,
       score: data.score,
-      score: data.timestamp,
+      timestamp: data.timestamp,
     },
   });
 };
