@@ -12,7 +12,7 @@ export const gameStart = async (id, payload) => {
   initializeMonsters(id);
   initializeBase(id);
 
-  const highScore = await getHighScore(id);
+  const highScore = (await getHighScore(id)) || 0;
   return { status: 'success', highScore };
 };
 
@@ -35,7 +35,7 @@ export const gameEnd = async (id, payload) => {
     timestamp: new Date(gameEndTime),
     score,
   };
-  addGameResult(id, data);
+  await addGameResult(id, data);
   const highScore = await getHighScore(id);
 
   return { status: 'success', message: 'Game ended', score, highScore };
