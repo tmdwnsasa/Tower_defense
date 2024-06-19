@@ -22,10 +22,6 @@ app.get('/', (req, res) => {
   return res.status(200).json({ message: 'Hello World!' });
 });
 
-// app.listen(PORT, () => {
-//   console.log(PORT, '포트 서버 연결 완료');
-// });
-
 server.listen(PORT, async () => {
   try {
     const assets = await loadGameAssets();

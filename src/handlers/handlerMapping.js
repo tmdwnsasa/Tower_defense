@@ -1,7 +1,10 @@
 import { damageBase } from './base.handler.js';
 import { gameStart, gameEnd, handleTowerEvent } from './game.handler.js';
 import { moveStageHandler } from './stage.handler.js';
+import { handleTowerEvent } from './tower.handler.js';
 import { addMonsterKillCount } from './monster.handler.js';
+import { gameEnd, gameStart } from './game.handler.js';
+
 
 const handlerMapping = {
   2: gameStart,
