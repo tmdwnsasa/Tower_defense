@@ -11,6 +11,7 @@ export const initializeScore = (userId) => {
 
 // 해당 유저 점수 조회
 export const getScore = (userId) => {
+  if(!userId) return userScoreInfo;
   return userScoreInfo[userId];
 };
 
@@ -18,18 +19,18 @@ export const getScore = (userId) => {
 export const setScore = (userId, score) => {
   
   userScoreInfo[userId] = score;
-  console.log(`setScore: ${userScoreInfo}`);
+  // console.log(`setScore: ${userScoreInfo}`);
 };
 
 // 해당 유저 점수 추가
 export const addScore = (userId, score) => {
   userScoreInfo[userId] += score;
-  console.log(`userScoreInfo >> userId : ${userId}, Current Score: ${userScoreInfo[userId]}`);
+  // console.log(`userScoreInfo >> userId : ${userId}, Current Score: ${userScoreInfo[userId]}`);
 };
 
 // 해당 유저 점수 추가
 export const removeScore = (userId) => {
-  delete userScoreInfo.userId;
+  delete userScoreInfo[userId];
 };
 
 

@@ -370,10 +370,9 @@ function gameLoop() {
     if (monster.hp > 0) {
       const isDestroyed = monster.move(base);
       if (isDestroyed) {
-        sendEvent(3, { timestamp: Date.now(), score });
         /* 게임 오버 */
-        alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         sendEvent(3, { timestamp: Date.now(), score });
+        alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         return setTimeout(() => location.reload(), 2000);
       }
       monster.draw(ctx);

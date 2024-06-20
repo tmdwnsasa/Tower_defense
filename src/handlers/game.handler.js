@@ -3,7 +3,7 @@ import { clearStage, createStage, setStage } from '../models/stage.model.js';
 import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model.js';
 import { initializeBase } from '../models/base.model.js';
 import { addGameResult } from '../models/score.model.js';
-import { initializeScore, removeScore } from '../models/score.model.js'; 
+import { initializeScore, removeScore, getScore } from '../models/score.model.js'; 
 
 
 export const gameStart = (id, payload) => {
@@ -21,7 +21,6 @@ export const gameStart = (id, payload) => {
 export const gameEnd = (id, payload) => {
   const { timestamp: gameEndTime, score } = payload;
 
-  console.log("payload", payload);
   // 점수 검증
   const monstersInfo = getUserMonstersInfo(id);
   let totalScore = 0;
