@@ -2,6 +2,7 @@ import { CLIENT_VERSION } from './Constants.js';
 
 let userId = null;
 let socket;
+let highScore;
 const connectServer = (id) => {
   socket = io('http://localhost:3000', {
     query: {
@@ -20,6 +21,9 @@ const connectServer = (id) => {
 
   socket.on('connection', (data) => {
     userId = id;
+    if (data.highScore === 0 || data.highScore) {
+      highScore = data.highScore;
+    }
   });
 };
 
@@ -37,4 +41,8 @@ const getId = () => {
   return userId;
 };
 
-export { connectServer, sendEvent, getId };
+const getHighScore = () => {
+  return highScore;
+};
+
+export { connectServer, sendEvent, getId, getHighScore };
