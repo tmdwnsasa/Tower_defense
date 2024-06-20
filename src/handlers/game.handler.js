@@ -5,6 +5,7 @@ import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model
 import { initializeBase } from '../models/base.model.js';
 import { addGameResult } from '../models/score.model.js';
 import { addTower, removeTower, upgradeTower } from '../models/tower.model.js';
+import { initializeScore, removeScore } from '../models/score.model.js'; 
 
 export const gameStart = (id, payload) => {
   const { stages } = getGameAssets();
@@ -13,14 +14,18 @@ export const gameStart = (id, payload) => {
 
   initializeMonsters(id);
   initializeBase(id);
+  initializeScore(id);
 
   return { status: 'success' };
 };
 
 export const gameEnd = async (userId, payload) => {
+  
   const { timestamp: gameEndTime, score } = payload;
+
+  console.log("payload", payload);
   // 점수 검증
-  // if () {
+  // if (true) {
   //   return { status: 'fail', message: 'score verification failed' };
   // }
   const monstersInfo = getUserMonstersInfo(id);
@@ -34,7 +39,9 @@ export const gameEnd = async (userId, payload) => {
     return { status: 'fail', message: 'Score verification failed' };
   }
 
-  clearStage(id);
+  //clearStage(userId);
+  //removeScore(userId);
+
   //DB에 저장한다면 여기서
   const data = {
     timestamp: new Date(gameEndTime),

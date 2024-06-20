@@ -1,16 +1,37 @@
 import { prisma } from '../utils/prisma/index.js';
 
-// // 최고 점수 갱신
-// export const updateHighScore = async (userId, score) => {
-//   const updatedHighScore = await prisma.User.update({
-//     data: {
-//       score,
-//     },
-//     where: {
-//       userId,
-//     },
-//   });
-// };
+const userScoreInfo = {};
+
+// 게임 시작 시 몬스터 기록 초기화
+export const initializeScore = (userId) => {
+  
+  userScoreInfo[userId] = 0;
+  console.log(`initializeScore: ${userScoreInfo}`);
+};
+
+// 해당 유저 점수 조회
+export const getScore = (userId) => {
+  return userScoreInfo[userId];
+};
+
+// 해당 유저 점수 설정
+export const setScore = (userId, score) => {
+  
+  userScoreInfo[userId] = score;
+  console.log(`setScore: ${userScoreInfo}`);
+};
+
+// 해당 유저 점수 추가
+export const addScore = (userId, score) => {
+  userScoreInfo[userId] += score;
+  console.log(`userScoreInfo >> userId : ${userId}, Current Score: ${userScoreInfo[userId]}`);
+};
+
+// 해당 유저 점수 추가
+export const removeScore = (userId) => {
+  delete userScoreInfo.userId;
+};
+
 
 // 최고 점수 조회
 export const getHighScore = async (userId) => {

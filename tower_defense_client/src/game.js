@@ -20,6 +20,8 @@ const ctx = canvas.getContext('2d');
 
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 
+const MONSTER_SCORE = 100; // 몬스터 처치 점수
+
 // 시작 데이터 정보
 const INIT_DATA = initData.data;
 
@@ -365,16 +367,18 @@ function gameLoop() {
     if (monster.hp > 0) {
       const isDestroyed = monster.move(base);
       if (isDestroyed) {
+        sendEvent(3, { timestamp: Date.now(), score });
         /* 게임 오버 */
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
-        sendEvent(3, { timestamp: Date.now(), score });
         setTimeout(() => location.reload(), 2000);
       }
       monster.draw(ctx);
     } else {
       sendEvent(41, { monsterLevel: monster.level });
       monsters.splice(i, 1);
-      score += 100;
+      // 몬스터 처치 시, 점수 획득 이벤트(handlerId: 24) 전송
+      sendEvent(24, {currentScore: score, score: MONSTER_SCORE});
+      score += MONSTER_SCORE;
     }
   }
 
