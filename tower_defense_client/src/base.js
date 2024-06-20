@@ -1,4 +1,4 @@
-import { sendEvent } from './Socket.js';
+import { getSocket } from './Socket.js';
 
 export class Base {
   constructor(x, y, maxHp) {
@@ -23,7 +23,7 @@ export class Base {
     // 기지가 데미지를 입는 메소드입니다.
     // 몬스터가 기지의 HP를 감소시키고, HP가 0 이하가 되면 게임 오버 처리를 해요!
     this.hp -= amount;
-    sendEvent(51, { currHp: this.hp });
+    getSocket().sendEvent(51, { currHp: this.hp });
     return this.hp <= 0; // 기지의 HP가 0 이하이면 true, 아니면 false
   }
 }
