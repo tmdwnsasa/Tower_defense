@@ -4,6 +4,7 @@ import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model
 import { initializeBase } from '../models/base.model.js';
 import { addGameResult } from '../models/score.model.js';
 import { initializeScore, removeScore, getScore } from '../models/score.model.js'; 
+import { initializeGold } from '../models/gold.model.js';
 
 
 export const gameStart = (id, payload) => {
@@ -14,7 +15,8 @@ export const gameStart = (id, payload) => {
   initializeMonsters(id);
   initializeBase(id);
   initializeScore(id);
-
+  initializeGold(id);
+  
   return { status: 'success' };
 };
 

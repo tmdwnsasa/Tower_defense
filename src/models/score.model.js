@@ -6,7 +6,7 @@ const userScoreInfo = {};
 export const initializeScore = (userId) => {
   
   userScoreInfo[userId] = 0;
-  console.log(`initializeScore: ${userScoreInfo}`);
+  console.log(`initializeScore: ${JSON.stringify(userScoreInfo)}`);
 };
 
 // 해당 유저 점수 조회

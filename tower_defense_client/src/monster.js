@@ -4,7 +4,7 @@ export class Monster {
     if (!path || path.length <= 0) {
       throw new Error('몬스터가 이동할 경로가 필요합니다.');
     }
-
+    this.successAttack = false;
     this.monsterNumber = monsterData.id;
     this.path = path; // 몬스터가 이동할 경로
     this.currentIndex = 0; // 몬스터가 이동 중인 경로의 인덱스
@@ -43,6 +43,7 @@ export class Monster {
       return false;
     } else {
       const isDestroyed = base.takeDamage(this.attackPower); // 기지에 도달하면 기지에 데미지를 입힙니다!
+      this.successAttack = true;
       this.hp = 0; // 몬스터는 이제 기지를 공격했으므로 자연스럽게 소멸해야 합니다.
       return isDestroyed;
     }
@@ -54,4 +55,5 @@ export class Monster {
     ctx.fillStyle = 'white';
     ctx.fillText(`(레벨 ${this.level}) ${this.hp}/${this.maxHp}`, this.x, this.y - 5);
   }
+
 }
