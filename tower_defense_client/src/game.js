@@ -354,6 +354,7 @@ function gameLoop() {
     let prevStage = stage;
     stage = stage + 1 < MONSTER_UNLOCK_CONFIG.length + stageOffset ? stage + 1 : stage;
     spawnGoldenGoblin();
+    sendEvent(32, {});
     //console.log("prevStage, stage: ", prevStage, stage);
     if (prevStage !== stage) {
       sendEvent(11, { currentStage: prevStage, targetStage: stage });
@@ -375,10 +376,11 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       if (monster.monsterNumber === 6) {
+        sendEvent(33, { monsterNumber: monster.monsterNumber });
         userGold += 500;
         monsters.splice(i, 1);
       } else {
-        sendEvent(41, { monsterLevel: monster.level });
+        sendEvent(31, { monsterLevel: monster.level });
         monsters.splice(i, 1);
         score += 100;
       }
@@ -429,11 +431,13 @@ Promise.all([
         resolve('success');
       }
     }, 100);
-    console.log(userId);
   }).then((id) => {
     initGame();
   });
 
+  // if (!isInitGame && userId !== null) {
+  //   initGame();
+  // }
   // let somewhere;
   // serverSocket = io('서버주소', {
   //   auth: {

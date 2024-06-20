@@ -2,7 +2,6 @@ import { addTower, removeTower, upgradeTower } from '../models/tower.model.js';
 
 export const handleTowerEvent = (userId, payload) => {
   const { x, y, eventId } = payload;
-  console.log(`userId: ${userId}, eventId : ${eventId} `);
   switch (eventId) {
     case 42: // 초기 타워 배치
     case 43: // 타워 구입
