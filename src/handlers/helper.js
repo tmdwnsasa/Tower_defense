@@ -2,18 +2,19 @@ import { CLIENT_VERSION } from '../constants.js';
 import { getUser, removeUser } from '../models/user.model.js';
 import { createStage } from '../models/stage.model.js';
 import handlerMappings from './handlerMapping.js';
+import { getHighScore } from '../models/score.model.js';
 
 export const handleDisconnect = (socket, id) => {
-
   removeUser(socket.id);
 };
 
-export const handleConnection = (socket, id) => {
-
+export const handleConnection = async (socket, id) => {
   // 스테이지 빈 배열 생성
   createStage(id);
 
-  socket.emit('connection', { id });
+  const highScore = (await getHighScore(id)) || 0;
+
+  socket.emit('connection', { status: 'success', id, highScore });
 };
 
 export const handlerEvent = (io, socket, data) => {
