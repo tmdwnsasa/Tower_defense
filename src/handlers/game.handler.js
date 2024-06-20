@@ -1,10 +1,9 @@
 import { getGameAssets } from '../init/assets.js';
 import { clearStage, createStage, setStage } from '../models/stage.model.js';
 import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model.js';
-import { initializeBase } from '../models/base.model.js';
+import { getBaseHp, initializeBase } from '../models/base.model.js';
 import { addGameResult } from '../models/score.model.js';
-import { initializeScore, removeScore, getScore } from '../models/score.model.js'; 
-
+import { initializeScore, removeScore, getScore } from '../models/score.model.js';
 
 export const gameStart = (id, payload) => {
   const { stages } = getGameAssets();
@@ -20,6 +19,12 @@ export const gameStart = (id, payload) => {
 
 export const gameEnd = (id, payload) => {
   const { timestamp: gameEndTime, score } = payload;
+
+  // base HP 검증
+  const baseHp = getBaseHp();
+  if (baseHp > 0) {
+    return { status: 'fail', message: `Base HP remains (HP: ${baseHp})` };
+  }
 
   // 점수 검증
   const monstersInfo = getUserMonstersInfo(id);
