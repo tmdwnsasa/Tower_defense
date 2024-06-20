@@ -3,7 +3,8 @@ import { clearStage, createStage, setStage } from '../models/stage.model.js';
 import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model.js';
 import { getBaseHp, initializeBase } from '../models/base.model.js';
 import { addGameResult } from '../models/score.model.js';
-import { initializeScore, removeScore, getScore } from '../models/score.model.js';
+import { initializeScore, removeScore, getScore } from '../models/score.model.js'; 
+import { initializeGold } from '../models/gold.model.js';
 
 export const gameStart = (id, payload) => {
   const { stages } = getGameAssets();
@@ -13,7 +14,8 @@ export const gameStart = (id, payload) => {
   initializeMonsters(id);
   initializeBase(id);
   initializeScore(id);
-
+  initializeGold(id);
+  
   return { status: 'success' };
 };
 

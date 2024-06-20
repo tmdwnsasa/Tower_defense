@@ -189,7 +189,10 @@ function placeNewTower() {
     return;
   }
 
+  // 골드 동기화
+  sendEvent(25, {currentGold: userGold, gold: -towerCost});
   userGold -= towerCost;
+  
 
   const eventId = 43;
   const { x, y } = getRandomPositionNearPath(200);
@@ -206,7 +209,12 @@ function refundTower(tower) {
   const index = towers.indexOf(tower);
   if (index !== -1) {
     towers.splice(index, 1);
-    userGold += tower.getRefundAmount();
+    let refundGold = tower.getRefundAmount();
+    // 골드 동기화
+    sendEvent(25, {currentGold: userGold, gold: towerCost});
+    userGold += refundGold;
+    
+
     console.log('Event ID: 44');
     serverSocket.sendEvent(44, { x: tower.x, y: tower.y, eventId }); // 타워 환불 이벤트
     updateGoldDisplay();
@@ -261,8 +269,10 @@ function upgradeTower(tower) {
     showMessage('업그레이드 비용이 부족합니다.');
     return;
   }
-
+  // 골드 동기화
+  sendEvent(25, {currentGold: userGold, gold: -upgradeCost});
   userGold -= upgradeCost;
+  
 
   tower.upgrade();
   const eventId = 45;
@@ -350,6 +360,8 @@ function gameLoop() {
 
   if (score >= 2000 * monsterLevel) {
     monsterLevel++;
+    // 골드 동기화
+    sendEvent(25, {currentGold: userGold, gold: 1000});
     userGold += 1000;
 
     let prevStage = stage;
@@ -376,17 +388,26 @@ function gameLoop() {
       }
       monster.draw(ctx);
     } else {
-      if (monster.monsterNumber === 6) {
-        serverSocket.sendEvent(33, { monsterNumber: monster.monsterNumber });
-        userGold += 500;
-        monsters.splice(i, 1);
-      } else {
-        serverSocket.sendEvent(31, { monsterLevel: monster.level });
-        monsters.splice(i, 1);
-        // 몬스터 처치 시, 점수 획득 이벤트(handlerId: 24) 전송
-        serverSocket.sendEvent(24, { currentScore: score, score: MONSTER_SCORE });
-        score += MONSTER_SCORE;
+      if(!monster.successAttack){
+        // console.log("Monster died to Tower")
+        if (monster.monsterNumber === 6) {
+           serverSocket.sendEvent(33, { monsterNumber: monster.monsterNumber });
+          // 골드 동기화
+           serverSocket.sendEvent(25, {currentGold: userGold, gold: 1000});
+        } else {
+           serverSocket.sendEvent(31, { monsterLevel: monster.level });
+          // 몬스터 처치 시, 점수 획득 이벤트(handlerId: 24) 전송
+           serverSocket.sendEvent(24, {currentScore: score, score: MONSTER_SCORE});
+          score += MONSTER_SCORE;
+        }
       }
+      else{
+        // console.log("Monster died to base attack")
+      }
+      
+      // 어찌 죽었든 몬스터 배열에서 해당 몬스터 제거
+      monsters.splice(i, 1);
+      
     }
   }
 
