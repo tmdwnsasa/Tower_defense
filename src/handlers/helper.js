@@ -12,7 +12,7 @@ export const handleConnection = async (socket, id) => {
   // 스테이지 빈 배열 생성
   createStage(id);
 
-  const highScore = await getHighScore();
+  const highScore = (await getHighScore(id)) || 0;
 
   socket.emit('connection', { status: 'success', id, highScore });
 };

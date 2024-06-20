@@ -21,7 +21,7 @@ const connectServer = (id) => {
 
   socket.on('connection', (data) => {
     userId = id;
-    if (data.highScore) {
+    if (data.highScore === 0 || data.highScore) {
       highScore = data.highScore;
     }
   });
