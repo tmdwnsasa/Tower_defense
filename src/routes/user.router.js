@@ -63,7 +63,8 @@ router.post('/signIn', async (req, res, next) => {
       {
         id,
       },
-      configs.tokenSecretKey
+      configs.tokenSecretKey,
+      { expiresIn: '1h' }
     );
 
     res.cookie('authorization', `Bearer ${token}`);
