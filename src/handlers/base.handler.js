@@ -5,6 +5,11 @@ export const damageBase = (id, payload) => {
   if (currHp <= 0) {
     //점수 저장하기
   }
-  if (getBaseHp(id) < currHp) setBaseHp(currHp);
-  else return { status: 'fail' };
+  if (getBaseHp(id) < currHp) {
+    return { status: 'fail', message: 'Base has more HP than being attacked' };
+  }
+
+  setBaseHp(currHp);
+
+  return { status: 'success', message: 'Base is Attacked' };
 };

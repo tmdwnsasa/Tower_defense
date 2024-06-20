@@ -13,7 +13,7 @@ const connectServer = (id) => {
 
   socket.on('response', (data) => {
     if (data.status === 'fail') {
-      console.error(data.message);
+      console.error(data);
     } else {
       console.log(data);
     }
