@@ -2,9 +2,9 @@ import { getGameAssets } from '../init/assets.js';
 import { clearStage, createStage, setStage } from '../models/stage.model.js';
 import { getUserMonstersInfo, initializeMonsters } from '../models/monster.model.js';
 import { initializeBase } from '../models/base.model.js';
-import { addGameResult, getHighScore } from '../models/score.model.js';
+import { addGameResult } from '../models/score.model.js';
 
-export const gameStart = async (id, payload) => {
+export const gameStart = (id, payload) => {
   const { stages } = getGameAssets();
   clearStage(id);
   setStage(id, stages.data[0].id, payload.timestamp);
@@ -12,11 +12,10 @@ export const gameStart = async (id, payload) => {
   initializeMonsters(id);
   initializeBase(id);
 
-  const highScore = (await getHighScore(id)) || 0;
-  return { status: 'success', highScore };
+  return { status: 'success' };
 };
 
-export const gameEnd = async (id, payload) => {
+export const gameEnd = (id, payload) => {
   const { timestamp: gameEndTime, score } = payload;
   // 점수 검증
   const monstersInfo = getUserMonstersInfo(id);
@@ -35,8 +34,7 @@ export const gameEnd = async (id, payload) => {
     timestamp: new Date(gameEndTime),
     score,
   };
-  await addGameResult(id, data);
-  const highScore = await getHighScore(id);
+  addGameResult(id, data);
 
-  return { status: 'success', message: 'Game ended', score, highScore };
+  return { status: 'success', message: 'Game ended', score };
 };
