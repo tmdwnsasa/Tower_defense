@@ -2,8 +2,7 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import './Socket.js';
-import { connectServer, getHighScore, getId, sendEvent } from './Socket.js';
-import { id } from './user.js';
+import { getSocket } from './Socket.js';
 
 import stageData from '../assets/stage.json' with { type: 'json' };
 import monsterData from '../assets/monster.json' with { type: 'json' };
@@ -14,7 +13,7 @@ import initData from '../assets/init.json' with { type: 'json' };
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
 
-let serverSocket; // 서버 웹소켓 객체
+let serverSocket = getSocket(); // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -180,7 +179,7 @@ function placeInitialTowers() {
     towers.push(tower);
     tower.draw(ctx);
     console.log('Event ID: 42');
-    sendEvent(42, { x, y, eventId }); // 초기 타워 배치 이벤트
+    serverSocket.sendEvent(42, { x, y, eventId }); // 초기 타워 배치 이벤트
   }
 }
 
@@ -201,7 +200,7 @@ function placeNewTower() {
   towers.push(tower);
   tower.draw(ctx);
   console.log('Event ID: 43');
-  sendEvent(43, { x, y, eventId }); // 타워 구입 이벤트
+  serverSocket.sendEvent(43, { x, y, eventId }); // 타워 구입 이벤트
   updateGoldDisplay();
 }
 
@@ -217,7 +216,7 @@ function refundTower(tower) {
     
 
     console.log('Event ID: 44');
-    sendEvent(44, { x: tower.x, y: tower.y, eventId }); // 타워 환불 이벤트
+    serverSocket.sendEvent(44, { x: tower.x, y: tower.y, eventId }); // 타워 환불 이벤트
     updateGoldDisplay();
   }
 }
@@ -278,7 +277,7 @@ function upgradeTower(tower) {
   tower.upgrade();
   const eventId = 45;
   console.log('Event ID: 45');
-  sendEvent(45, { x: tower.x, y: tower.y, eventId }); // 타워 업그레이드 이벤트
+  serverSocket.sendEvent(45, { x: tower.x, y: tower.y, eventId }); // 타워 업그레이드 이벤트
   showMessage('업그레이드가 완료되었습니다.');
   updateGoldDisplay();
 }
@@ -368,10 +367,10 @@ function gameLoop() {
     let prevStage = stage;
     stage = stage + 1 < MONSTER_UNLOCK_CONFIG.length + stageOffset ? stage + 1 : stage;
     spawnGoldenGoblin();
-    sendEvent(32, {});
+    serverSocket.sendEvent(32, {});
     //console.log("prevStage, stage: ", prevStage, stage);
     if (prevStage !== stage) {
-      sendEvent(11, { currentStage: prevStage, targetStage: stage });
+      serverSocket.sendEvent(11, { currentStage: prevStage, targetStage: stage });
     }
   }
 
@@ -383,7 +382,7 @@ function gameLoop() {
       const isDestroyed = monster.move(base);
       if (isDestroyed) {
         /* 게임 오버 */
-        sendEvent(3, { timestamp: Date.now(), score });
+        serverSocket.sendEvent(3, { timestamp: Date.now(), score });
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         return setTimeout(() => location.reload(), 2000);
       }
@@ -392,13 +391,13 @@ function gameLoop() {
       if(!monster.successAttack){
         // console.log("Monster died to Tower")
         if (monster.monsterNumber === 6) {
-          sendEvent(33, { monsterNumber: monster.monsterNumber });
+           serverSocket.sendEvent(33, { monsterNumber: monster.monsterNumber });
           // 골드 동기화
-          sendEvent(25, {currentGold: userGold, gold: 1000});
+           serverSocket.sendEvent(25, {currentGold: userGold, gold: 1000});
         } else {
-          sendEvent(31, { monsterLevel: monster.level });
+           serverSocket.sendEvent(31, { monsterLevel: monster.level });
           // 몬스터 처치 시, 점수 획득 이벤트(handlerId: 24) 전송
-          sendEvent(24, {currentScore: score, score: MONSTER_SCORE});
+           serverSocket.sendEvent(24, {currentScore: score, score: MONSTER_SCORE});
           score += MONSTER_SCORE;
         }
       }
@@ -425,10 +424,10 @@ function initGame() {
   baseHp = +INIT_DATA.baseHp;
   //towerCost = +INIT_DATA.towerCost;
 
-  highScore = getHighScore();
+  highScore = serverSocket.getHighScore();
   // 시작 이벤트 발동(초기화 용)
   console.log('init');
-  sendEvent(2, { timestamp: Date.now() });
+  serverSocket.sendEvent(2, { timestamp: Date.now() });
 
   monsterPath = generateRandomMonsterPath();
   initMap();
@@ -447,10 +446,9 @@ Promise.all([
   new Promise((resolve) => (pathImage.onload = resolve)),
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
-  connectServer(id);
   new Promise((resolve) => {
     const interval = setInterval(function () {
-      userId = getId();
+      userId = serverSocket.getId();
       if (userId !== null) {
         clearInterval(interval);
         resolve('success');
