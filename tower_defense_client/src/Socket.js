@@ -2,6 +2,7 @@ import { CLIENT_VERSION } from './Constants.js';
 
 let userId = null;
 let socket;
+let highScore;
 const connectServer = (id) => {
   socket = io('http://localhost:3000', {
     query: {
@@ -9,17 +10,21 @@ const connectServer = (id) => {
       id: id,
     },
   });
-  userId = id;
 
   socket.on('response', (data) => {
     if (data.status === 'fail') {
-      console.error(data.message);
+      console.error(data);
     } else {
       console.log(data);
     }
   });
 
-  socket.on('connection', (data) => {});
+  socket.on('connection', (data) => {
+    userId = id;
+    if (data.highScore === 0 || data.highScore) {
+      highScore = data.highScore;
+    }
+  });
 };
 
 const sendEvent = (handlerId, payload) => {
@@ -31,5 +36,13 @@ const sendEvent = (handlerId, payload) => {
   });
 };
 
-export { connectServer, sendEvent };
+const getId = () => {
+  console.log(userId);
+  return userId;
+};
 
+const getHighScore = () => {
+  return highScore;
+};
+
+export { connectServer, sendEvent, getId, getHighScore };

@@ -2,7 +2,7 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import './Socket.js';
-import { connectServer, sendEvent } from './Socket.js';
+import { connectServer, getHighScore, getId, sendEvent } from './Socket.js';
 import { id } from './user.js';
 
 import stageData from '../assets/stage.json' with { type: 'json' };
@@ -18,7 +18,7 @@ let serverSocket; // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const NUM_OF_MONSTERS = 5; // 몬스터 개수
+const NUM_OF_MONSTERS = 6; // 몬스터 개수
 
 const MONSTER_SCORE = 100; // 몬스터 처치 점수
 
@@ -38,6 +38,7 @@ let stage = 1000;
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
 let baseHp = 0; // 기지 체력
+let userId = null;
 
 const towerCost = 100; // 타워 구입 비용
 const upgradeCost = 2000; // 타워 업그레이드 비용
@@ -173,15 +174,15 @@ function placeInitialTowers() {
   */
   numOfInitialTowers = +INIT_DATA.numOfInitialTowers;
   for (let i = 0; i < numOfInitialTowers; i++) {
-    const eventId = 42 ;
+    const eventId = 42;
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(x, y, towerCost, towerImage);
     towers.push(tower);
     tower.draw(ctx);
-    console.log('Event ID: 42'); 
-    sendEvent(42, { x, y , eventId}); // 초기 타워 배치 이벤트
+    console.log('Event ID: 42');
+    sendEvent(42, { x, y, eventId }); // 초기 타워 배치 이벤트
   }
-} 
+}
 
 function placeNewTower() {
   if (userGold < towerCost) {
@@ -191,15 +192,14 @@ function placeNewTower() {
 
   userGold -= towerCost;
 
-  const eventId = 43 ;
+  const eventId = 43;
   const { x, y } = getRandomPositionNearPath(200);
   const tower = new Tower(x, y, towerCost, towerImage);
-    towers.push(tower);
-    tower.draw(ctx);
-    console.log('Event ID: 43'); 
-    sendEvent(43, { x, y , eventId }); // 타워 구입 이벤트 
-    updateGoldDisplay();
-    
+  towers.push(tower);
+  tower.draw(ctx);
+  console.log('Event ID: 43');
+  sendEvent(43, { x, y, eventId }); // 타워 구입 이벤트
+  updateGoldDisplay();
 }
 
 function refundTower(tower) {
@@ -208,10 +208,10 @@ function refundTower(tower) {
   if (index !== -1) {
     towers.splice(index, 1);
     userGold += tower.getRefundAmount();
-    console.log('Event ID: 44'); 
-    sendEvent(44, { x: tower.x, y: tower.y , eventId }); // 타워 환불 이벤트
+    console.log('Event ID: 44');
+    sendEvent(44, { x: tower.x, y: tower.y, eventId }); // 타워 환불 이벤트
     updateGoldDisplay();
-  } 
+  }
 }
 
 function showMessage(message) {
@@ -263,12 +263,11 @@ function upgradeTower(tower) {
     return;
   }
 
-
   userGold -= upgradeCost;
-  
+
   tower.upgrade();
   const eventId = 45;
-  console.log('Event ID: 45'); 
+  console.log('Event ID: 45');
   sendEvent(45, { x: tower.x, y: tower.y, eventId }); // 타워 업그레이드 이벤트
   showMessage('업그레이드가 완료되었습니다.');
   updateGoldDisplay();
@@ -314,10 +313,14 @@ function placeBase() {
 }
 
 function spawnMonster() {
-  const monster_unlock = MONSTER_UNLOCK_CONFIG[stage-stageOffset].monster_ids;
-  const monsterId = monster_unlock[Math.floor(Math.random() * monster_unlock.length)];
-  const monsterData = MONSTER_CONFIG.find(monster => monster.id == monsterId);
-  // console.log(monsterData);
+  const monster_unlock = MONSTER_UNLOCK_CONFIG[stage - stageOffset].monster_ids;
+  const monsterId = monster_unlock[Math.floor(Math.random() * (monster_unlock.length - 1))];
+  const monsterData = MONSTER_CONFIG.find((monster) => monster.id == monsterId);
+  monsters.push(new Monster(monsterPath, monsterImages, monsterLevel, monsterData));
+}
+
+function spawnGoldenGoblin() {
+  const monsterData = MONSTER_CONFIG.find((monster) => monster.id == 6);
   monsters.push(new Monster(monsterPath, monsterImages, monsterLevel, monsterData));
 }
 
@@ -348,16 +351,16 @@ function gameLoop() {
 
   if (score >= 2000 * monsterLevel) {
     monsterLevel++;
-    userGold+= 1000;
+    userGold += 1000;
 
     let prevStage = stage;
-    stage = stage+1 < MONSTER_UNLOCK_CONFIG.length+stageOffset ? stage+1 : stage;
-
+    stage = stage + 1 < MONSTER_UNLOCK_CONFIG.length + stageOffset ? stage + 1 : stage;
+    spawnGoldenGoblin();
+    sendEvent(32, {});
     //console.log("prevStage, stage: ", prevStage, stage);
-    if(prevStage !== stage){
-      sendEvent(11, {currentStage: prevStage, targetStage: stage});
+    if (prevStage !== stage) {
+      sendEvent(11, { currentStage: prevStage, targetStage: stage });
     }
-    
   }
 
   base.draw(ctx, baseImage);
@@ -370,15 +373,22 @@ function gameLoop() {
         sendEvent(3, { timestamp: Date.now(), score });
         /* 게임 오버 */
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
-        setTimeout(() => location.reload(), 2000);
+        sendEvent(3, { timestamp: Date.now(), score });
+        return setTimeout(() => location.reload(), 2000);
       }
       monster.draw(ctx);
     } else {
-      sendEvent(41, { monsterLevel: monster.level });
-      monsters.splice(i, 1);
-      // 몬스터 처치 시, 점수 획득 이벤트(handlerId: 24) 전송
-      sendEvent(24, {currentScore: score, score: MONSTER_SCORE});
-      score += MONSTER_SCORE;
+      if (monster.monsterNumber === 6) {
+        sendEvent(33, { monsterNumber: monster.monsterNumber });
+        userGold += 500;
+        monsters.splice(i, 1);
+      } else {
+        sendEvent(31, { monsterLevel: monster.level });
+        monsters.splice(i, 1);
+        // 몬스터 처치 시, 점수 획득 이벤트(handlerId: 24) 전송
+        sendEvent(24, {currentScore: score, score: MONSTER_SCORE});
+        score += MONSTER_SCORE;
+      }
     }
   }
 
@@ -389,14 +399,16 @@ function initGame() {
   if (isInitGame) {
     return;
   }
-  
+
   // 시작 데이터 적용
   userGold = +INIT_DATA.userGold;
   baseHp = +INIT_DATA.baseHp;
   //towerCost = +INIT_DATA.towerCost;
 
+  highScore = getHighScore();
   // 시작 이벤트 발동(초기화 용)
-  sendEvent(2, {timestamp: Date.now()});
+  console.log('init');
+  sendEvent(2, { timestamp: Date.now() });
 
   monsterPath = generateRandomMonsterPath();
   initMap();
@@ -416,7 +428,21 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   connectServer(id);
+  new Promise((resolve) => {
+    const interval = setInterval(function () {
+      userId = getId();
+      if (userId !== null) {
+        clearInterval(interval);
+        resolve('success');
+      }
+    }, 100);
+  }).then((id) => {
+    initGame();
+  });
 
+  // if (!isInitGame && userId !== null) {
+  //   initGame();
+  // }
   // let somewhere;
   // serverSocket = io('서버주소', {
   //   auth: {
@@ -429,9 +455,6 @@ Promise.all([
     e.g. serverSocket.on("...", () => {...});
     이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
   */
-  if (!isInitGame) {
-    initGame();
-  }
 });
 
 const buyTowerButton = document.createElement('button');
