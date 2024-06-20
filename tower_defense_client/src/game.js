@@ -2,7 +2,7 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import './Socket.js';
-import { connectServer, getId, sendEvent } from './Socket.js';
+import { connectServer, getHighScore, getId, sendEvent } from './Socket.js';
 import { id } from './user.js';
 
 import stageData from '../assets/stage.json' with { type: 'json' };
@@ -398,6 +398,7 @@ function initGame() {
   baseHp = +INIT_DATA.baseHp;
   //towerCost = +INIT_DATA.towerCost;
 
+  highScore = getHighScore();
   // 시작 이벤트 발동(초기화 용)
   console.log('init');
   sendEvent(2, { timestamp: Date.now() });
@@ -433,9 +434,6 @@ Promise.all([
     initGame();
   });
 
-  // if (!isInitGame && userId !== null) {
-  //   initGame();
-  // }
   // let somewhere;
   // serverSocket = io('서버주소', {
   //   auth: {

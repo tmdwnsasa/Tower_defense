@@ -2,8 +2,7 @@ import { CLIENT_VERSION } from './Constants.js';
 
 let userId = null;
 let socket;
-let highScore = 0;
-
+let highScore;
 const connectServer = (id) => {
   socket = io('http://localhost:3000', {
     query: {
@@ -11,22 +10,21 @@ const connectServer = (id) => {
       id: id,
     },
   });
-  userId = id;
 
   socket.on('response', (data) => {
     if (data.status === 'fail') {
       console.error(data.message);
     } else {
       console.log(data);
-      if (data.highScore) {
-        highScore = data.highScore;
-      }
     }
   });
 
-  socket.on('connection', (data) => {});
-
-  return socket;
+  socket.on('connection', (data) => {
+    userId = id;
+    if (data.highScore) {
+      highScore = data.highScore;
+    }
+  });
 };
 
 const sendEvent = (handlerId, payload) => {
@@ -38,18 +36,13 @@ const sendEvent = (handlerId, payload) => {
   });
 };
 
-const getData = (dataName) => {
-  let data;
-
-  switch (dataName) {
-    case 'highScore':
-      data = highScore;
-      break;
-    default:
-      data = null;
-  }
-
-  return data;
+const getId = () => {
+  console.log(userId);
+  return userId;
 };
 
-export { connectServer, sendEvent, getData };
+const getHighScore = () => {
+  return highScore;
+};
+
+export { connectServer, sendEvent, getId, getHighScore };

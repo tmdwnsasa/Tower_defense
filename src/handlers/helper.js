@@ -2,19 +2,22 @@ import { CLIENT_VERSION } from '../constants.js';
 import { getUser, removeUser } from '../models/user.model.js';
 import { createStage } from '../models/stage.model.js';
 import handlerMappings from './handlerMapping.js';
+import { getHighScore } from '../models/score.model.js';
 
 export const handleDisconnect = (socket, id) => {
   removeUser(socket.id);
 };
 
-export const handleConnection = (socket, id) => {
+export const handleConnection = async (socket, id) => {
   // 스테이지 빈 배열 생성
   createStage(id);
 
-  socket.emit('connection', { id });
+  const highScore = await getHighScore();
+
+  socket.emit('connection', { status: 'success', id, highScore });
 };
 
-export const handlerEvent = async (io, socket, data) => {
+export const handlerEvent = (io, socket, data) => {
   if (!CLIENT_VERSION.includes(data.clientVersion)) {
     socket.emit('response', { status: 'fail', message: 'Wrong client version' });
     return;
@@ -28,7 +31,7 @@ export const handlerEvent = async (io, socket, data) => {
     return;
   }
 
-  const response = await handler(data.userId, data.payload);
+  const response = handler(data.userId, data.payload);
 
   if (response.broadcast) {
     io.emit('response', 'response');
