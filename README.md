@@ -59,67 +59,85 @@
     |userId|int|요청을 보내는 유저의 ID|
     |clientVersion|string|현재 클라이언트 버전 (”1.0.0”) (고정)|
     |payload|JSON|요청 내용|
+  
+<details>
+<summary><h3>각 핸들러 payload</h3></summary>
 
-- 커넥션 성공 이벤트
+- **커넥션 성공 시**
   
     |필드 명 | 타입 | 설명 |
     |-------|------|-------|
     |id|string|검증 받은 유저의 ID|
     |highScore|int|유저의 최고 기록|
 
-- 기지 체력 감소 시
+- **gameStart(handlerId: 2)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |currHp|int|기지의 현재 체력|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | timestamp | Date | 게임 시작 시간 |
 
-- 유저 골드 획득 시
+- **gameEnd(handlerId: 3)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |currentGold|int|유저의 현재 골드|
-    |gold|int|획득한 골드|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | timestamp | Date | 게임 종료 시간 |
+    | score | int | 게임 결과 점수 |
 
-- 타워 구입, 환불, 강화 시
+- **moveStageHandler(handlerId: 11)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |x|int|타워의 x좌표|
-    |y|int|타워의 y좌표|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | currentStage | int | 현재 스테이지 |
+    | targetStage | int | 다음 스테이지 |
 
-- 적 처치 시
+- **addMonsterKillScore(handlerId: 24)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |monsterLevel|int|적의 레벨|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | currentScore | int | 현재 게임 점수 |
+    | score | int | 추가할 킬 점수 |
 
-- 유저 점수 획득 시
+- **applyChangedGold(handlerId: 25)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |currentScore|int|유저의 현재 점수|
-    |score|int|획득한 점수|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | currentGold | int | 현재 골드 |
+    | gold | int | 사용/획득한 골드 |
 
-- 스테이지 변경 시
+- **addMonsterKillCount(handlerId: 31)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |currentStage|int|현재 스테이지|
-    |targetStage|int|이동하는 스테이지|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | monsterLevel | int | 처치한 몬스터 레벨 |
 
-- 황금 고블린 처치 시
+- **spawnGoldenGoblin(handlerId: 32)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |monsterNumber|int|황금 고블린의 id|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | - | - | - |
+    | - | - | - |
 
-- 게임 종료 시
+- **killGoldenGoblin(handlerId: 33)**
 
-    |필드 명 | 타입 | 설명 |
-    |-------|------|-------|
-    |timeStamp|int|게임 종료 시각|
-    |score|int|게임 종료 시 점수|
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | monsterNumber | int | 몬스터 고유번호 |
 
+- **handleTowerEvent(42~45)**
+
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | x | int | 타워의 x좌표 |
+    | y | int | 타워의 y좌표 |
+    | eventId | int | 이벤트 id |
+
+- **damageBase(handlerId: 51)**
+
+    | 필드 명 | 타입 | 설명 |
+    | --- | --- | --- |
+    | currHp | int | 기지의 현재 체력 |
+
+</details>
 
 ### ERD 
 
